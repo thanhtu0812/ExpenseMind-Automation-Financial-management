@@ -129,7 +129,8 @@ const Home = () => {
                       ))}
                     </Pie>
                     <Tooltip formatter={(value) => `${value.toLocaleString()}đ`} />
-                    {/* <RechartsLegend  content={renderLegend} verticalAlign="bottom" /> */}
+
+                    {/* <RechartsLegend content={renderLegend} verticalAlign="bottom" /> */}
                   </PieChart>
                 ) : (<p className="empty-chart-text">No expense data yet</p>)}
                 <p className="total-text chart-total">

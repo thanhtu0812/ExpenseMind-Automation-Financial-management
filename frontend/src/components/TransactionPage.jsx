@@ -97,7 +97,7 @@ const TransactionPage = () => {
         )}
       </div>
 
-      <footer>@Copyright 2025</footer>
+      <footer className="transaction-footer">@Copyright 2025</footer>
     </div>
   );
 };
