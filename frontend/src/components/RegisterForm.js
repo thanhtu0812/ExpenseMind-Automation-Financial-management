@@ -6,26 +6,32 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import SuccessModal from "./SuccessModal";
 
 const RegisterForm = () => {
+  const [step, setStep] = useState(1); 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [gender, setGender] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showVerifyPassword, setShowVerifyPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [errors, setErrors] = useState({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
+  //Gửi mã xác thực
+  const handleSendVerificationCode = async (e) => {
     e.preventDefault();
     setError("");
 
-    // Validation
-    
+    // Validation cơ bản
+    if (!name.trim() || !email.trim() || !password.trim() || !verifyPassword.trim() || !gender || !dateOfBirth) {
+      setError("Please fill in all fields!");
+      return;
+    }
+
     if (password !== verifyPassword) {
       setError("Passwords do not match!");
       return;
@@ -36,63 +42,65 @@ const RegisterForm = () => {
       return;
     }
 
-if (!password.trim()) {
-    setError("Please enter your password.");
-    return;
-  }
-  if (!dateOfBirth) {
-    setError("Please select your date of birth.");
-    return;
-  }
-  if (!gender) {
-    setError("Please select your gender.");
-    return;
-  }
-  if (!email.trim()) {
-    setError("Please enter your email.");
-    return;
-  }
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    setError("Please enter a valid email address.");
-    return;
-  }
-  if (!name.trim()) {
-    setError("Please enter your name.");
-    return;
-  }
-
-
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
 
     setLoading(true);
 
     try {
+      const response = await fetch("http://localhost:5000/api/auth/send-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to send verification code.");
+
+      setStep(2); 
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //Xác thực mã và tạo tài khoản
+  const handleVerifyAndRegister = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!verificationCode.trim()) {
+      setError("Please enter verification code.");
+      return;
+    }
+
+    setLoading(true);
+    try {
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: name,
-          email: email,
-          password: password,
+          email,
+          password,
           dob: dateOfBirth,
-          gender: gender, 
+          gender,
+          verificationCode,
         }),
       });
 
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed!");
-      }
+      if (!response.ok) throw new Error(data.message || "Registration failed!");
 
       localStorage.setItem("token", data.token || "dummy-token");
-
-      // Show success modal
-      setShowSuccessModal(true);
-    } catch (error) {
-      setError(error.message || "An error occurred. Please try again!");
+      navigate("/home");
+      
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -120,123 +128,136 @@ if (!password.trim()) {
           </div>
         )}
 
-        <form onSubmit={handleRegister} className="register-form">
-          {/* Name */}
-          <div className="register-input-group">
-            <input
-              type="text"
-              placeholder="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-
-          {/* Email */}
-          <div className="register-input-group">
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          {/* Gender */}
-          <div className="input-group gender-group">
-            <label>
+        {/* Nhập thông tin cơ bản */}
+        {step === 1 && (
+          <form onSubmit={handleSendVerificationCode} className="register-form">
+            <div className="register-input-group">
               <input
-                type="radio"
-                value="male"
-                checked={gender === "male"}
-                onChange={(e) => setGender(e.target.value)}
-              />{" "}
-              Male
-            </label>
-            <label>
+                type="text"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="register-input-group">
               <input
-                type="radio"
-                value="female"
-                checked={gender === "female"}
-                onChange={(e) => setGender(e.target.value)}
-              />{" "}
-              Female
-            </label>
-          </div>
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
 
-          {/* Date of Birth */}
-          <div className="register-input-group">
-            <input
-              type="date"
-              lang="en"
-              value={dateOfBirth}
-              onChange={(e) => setDateOfBirth(e.target.value)}
-              required
-            />
-          </div>
+            <div className="input-group gender-group">
+              <label>
+                <input
+                  type="radio"
+                  value="male"
+                  checked={gender === "male"}
+                  onChange={(e) => setGender(e.target.value)}
+                />{" "}
+                Male
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="female"
+                  checked={gender === "female"}
+                  onChange={(e) => setGender(e.target.value)}
+                />{" "}
+                Female
+              </label>
+            </div>
 
-          {/* Password */}
-          <div className="register-input-group">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <span
-              className="register-eye-icon"
-              onClick={() => setShowPassword(!showPassword)}
+            <div className="register-input-group">
+              <input
+                type="date"
+                lang="en"
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="register-input-group">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <span
+                className="register-eye-icon"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEye /> : <FaEyeSlash />}
+              </span>
+            </div>
+
+            <div className="register-input-group">
+              <input
+                type={showVerifyPassword ? "text" : "password"}
+                placeholder="Verify Password"
+                value={verifyPassword}
+                onChange={(e) => setVerifyPassword(e.target.value)}
+                required
+              />
+              <span
+                className="register-eye-icon"
+                onClick={() => setShowVerifyPassword(!showVerifyPassword)}
+              >
+                {showVerifyPassword ? <FaEye /> : <FaEyeSlash />}
+              </span>
+            </div>
+
+            <button 
+              type="submit"
+              className="signup-btn"
+              disabled={loading}
+              style={{ opacity: loading ? 0.6 : 1, cursor: loading ? "not-allowed" : "pointer" }}
             >
-              {showPassword ? <FaEye /> : <FaEyeSlash />}
-            </span>
-          </div>
+              {loading ? "Sending code..." : "Register Now"}
+            </button>
+          </form>
+        )}
 
-          <div className="register-input-group">
-            <input
-              type={showVerifyPassword ? "text" : "password"}
-              placeholder="Verify Password"
-              value={verifyPassword}
-              onChange={(e) => setVerifyPassword(e.target.value)}
-              required
-            />
-            <span
-              className="register-eye-icon"
-              onClick={() => setShowVerifyPassword(!showVerifyPassword)}
+        {/*Nhập mã xác thực */}
+        {step === 2 && (
+          <form onSubmit={handleVerifyAndRegister} className="register-form">
+            <div className="register-input-group">
+              <input
+                type="text"
+                placeholder="Enter verification code"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                required
+              />
+            </div>
+
+            <button 
+              type="submit"
+              className="signup-btn"
+              disabled={loading}
+              style={{ opacity: loading ? 0.6 : 1, cursor: loading ? "not-allowed" : "pointer" }}
             >
-              {showVerifyPassword ? <FaEye /> : <FaEyeSlash />}
-            </span>
-          </div>
-
-          <button 
-            type="submit" 
-            className="signup-btn"
-            disabled={loading}
-            style={{ opacity: loading ? 0.6 : 1, cursor: loading ? "not-allowed" : "pointer" }}
-          >
-            {loading ? "Registering..." : "Sign up"}
-          </button>
-        </form>
+              {loading ? "Registering..." : "Register"}
+            </button>
+          </form>
+        )}
 
         <p className="login-prompt">
           Already have an account?
           <a href="/login" className="login-link">
-            {" "}
-            Log in
+            {" "}Log in
           </a>
         </p>
       </div>
 
-      {showSuccessModal && (
-        <SuccessModal
-          onClose={() => {
-            setShowSuccessModal(false);
-            navigate("/home");
-          }}
-          countdown={2}
-        />
-      )}
+     
     </div>
   );
 };
