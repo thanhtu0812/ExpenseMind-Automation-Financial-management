@@ -122,14 +122,14 @@ const Home = () => {
                       outerRadius={70}
                       paddingAngle={5}
                       dataKey="value"
+                      label={false}
                     >
                       {expenseCategoryStats.map((entry, index) => (
                         <Cell key={`cell-expense-${index}`} fill={COLORS_EXPENSE[index % COLORS_EXPENSE.length]} />
                       ))}
                     </Pie>
                     <Tooltip formatter={(value) => `${value.toLocaleString()}đ`} />
-
-                    <RechartsLegend content={renderLegend} verticalAlign="bottom" />
+                    {/* <RechartsLegend  content={renderLegend} verticalAlign="bottom" /> */}
                   </PieChart>
                 ) : (<p className="empty-chart-text">No expense data yet</p>)}
                 <p className="total-text chart-total">
@@ -152,14 +152,14 @@ const Home = () => {
                       outerRadius={70}
                       paddingAngle={5}
                       dataKey="value"
+                      label={false}
                     >
                       {incomeCategoryStats.map((entry, index) => (
                         <Cell key={`cell-income-${index}`} fill={COLORS_INCOME[index % COLORS_INCOME.length]} />
                       ))}
                     </Pie>
                     <Tooltip formatter={(value) => `${value.toLocaleString()}đ`} />
-                    {/* Chú thích tùy chỉnh */}
-                    <RechartsLegend content={renderLegend} verticalAlign="bottom" />
+                    {/* <RechartsLegend content={renderLegend} verticalAlign="bottom" /> */}
                   </PieChart>
                 ) : (<p className="empty-chart-text">No income data yet</p>)}
                 <p className="total-text chart-total">
