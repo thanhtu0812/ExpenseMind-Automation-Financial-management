@@ -125,6 +125,7 @@ const Profile = () => {
       const updatedAvatar = res.data.avatar;
       setUser({ ...user, avatar: updatedAvatar });
       localStorage.setItem("user", JSON.stringify({ ...user, avatar: updatedAvatar }));
+      window.dispatchEvent(new Event('avatarUpdated'));
       alert("Avatar updated successfully!");
     } catch (error) {
       console.error("Error uploading avatar:", error);
