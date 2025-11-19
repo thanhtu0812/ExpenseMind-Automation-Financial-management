@@ -182,28 +182,28 @@ export const Chatbot = () => {
   const handleFileUpload = async (e) => {
     const token = localStorage.getItem("token");
     if (!token) {
-        navigate("/login");
-        return;
+      navigate("/login");
+      return;
     }
 
     const file = e.target.files[0];
     if (file) {
-        const imageUrl = URL.createObjectURL(file);
-        const userMessage = {
-            id: Date.now(),
-            text: `Đang xử lý hình ảnh: ${file.name}`,
-            isBot: false,
-            timestamp: new Date(),
-            imageUrl: imageUrl,
-        };
-        setMessages((prev) => [...prev, userMessage]);
-        
-        setIsLoading(true);
-        await processReceiptImage(file);
-        setIsLoading(false);
+      const imageUrl = URL.createObjectURL(file);
+      const userMessage = {
+        id: Date.now(),
+        text: `Đang xử lý hình ảnh: ${file.name}`,
+        isBot: false,
+        timestamp: new Date(),
+        imageUrl: imageUrl,
+      };
+      setMessages((prev) => [...prev, userMessage]);
 
-        // Clear the file input
-        e.target.value = "";
+      setIsLoading(true);
+      await processReceiptImage(file);
+      setIsLoading(false);
+
+      // Clear the file input
+      e.target.value = "";
     }
   };
 
@@ -212,49 +212,49 @@ export const Chatbot = () => {
     const userId = localStorage.getItem("userId");
 
     const formData = new FormData();
-    formData.append('image', file);
-    formData.append('userId', userId);
-    formData.append('conversationId', conversationId);
+    formData.append("image", file);
+    formData.append("userId", userId);
+    formData.append("conversationId", conversationId);
 
     try {
-        const response = await fetch('/api/chatbot/upload', {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            body: formData,
-        });
+      const response = await fetch("/api/chatbot/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
-        if (response.status === 401) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("userId");
-            navigate("/login");
-            return;
-        }
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        navigate("/login");
+        return;
+      }
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (data.success) {
-            const botMessage = {
-                id: Date.now() + 1,
-                text: data.message,
-                isBot: true,
-                timestamp: new Date(),
-            };
-            setMessages((prev) => [...prev, botMessage]);
-        } else {
-            throw new Error(data.error || "Failed to process image.");
-        }
-    } catch (error) {
-        console.error("Error processing image:", error);
-        const errorMessage = {
-            id: Date.now() + 1,
-            text: "Xin lỗi, tôi gặp sự cố khi xử lý hình ảnh của bạn. Vui lòng thử lại.",
-            isBot: true,
-            isError: true,
-            timestamp: new Date(),
+      if (data.success) {
+        const botMessage = {
+          id: Date.now() + 1,
+          text: data.message,
+          isBot: true,
+          timestamp: new Date(),
         };
-        setMessages((prev) => [...prev, errorMessage]);
+        setMessages((prev) => [...prev, botMessage]);
+      } else {
+        throw new Error(data.error || "Failed to process image.");
+      }
+    } catch (error) {
+      console.error("Error processing image:", error);
+      const errorMessage = {
+        id: Date.now() + 1,
+        text: "Xin lỗi, tôi gặp sự cố khi xử lý hình ảnh của bạn. Vui lòng thử lại.",
+        isBot: true,
+        isError: true,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
     }
   };
 
@@ -305,7 +305,11 @@ export const Chatbot = () => {
                 )}
                 <div className="message-content">
                   {message.imageUrl && (
-                    <img src={message.imageUrl} alt="Uploaded preview" className="message-image-preview" />
+                    <img
+                      src={message.imageUrl}
+                      alt="Uploaded preview"
+                      className="message-image-preview"
+                    />
                   )}
                   <p>{message.text}</p>
                 </div>
@@ -376,7 +380,8 @@ export const Chatbot = () => {
                   accept="image/*"
                   style={{ display: "none" }}
                   disabled={isLoading}
-                />              </div>
+                />{" "}
+              </div>
             </div>
           </div>
         </div>

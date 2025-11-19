@@ -31,6 +31,14 @@ router.post("/message", async (req, res) => {
   try {
     const { message, conversationId, userId } = req.body;
 
+    // Validate input
+    if (!message || !conversationId || !userId) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing required fields: message, conversationId, or userId",
+      });
+    }
+
     let conversation = await Conversation.findOne({ conversationId });
     if (!conversation) {
       conversation = new Conversation({ conversationId, messages: [], userId });
@@ -38,7 +46,7 @@ router.post("/message", async (req, res) => {
 
     conversation.messages.push({
       role: "user",
-      content: message,
+      content: message.substring(0, 1000), // Giới hạn độ dài
       timestamp: new Date(),
     });
 
@@ -190,75 +198,173 @@ router.post("/message", async (req, res) => {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
-    const responseObject = JSON.parse(jsonMatch ? jsonMatch[1] : text);
 
-    let responseText;
+    // Kiểm tra response có tồn tại không
+    if (!text) {
+      throw new Error("AI response is empty");
+    }
+
+    let responseObject;
+    try {
+      const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
+      responseObject = JSON.parse(jsonMatch ? jsonMatch[1] : text);
+    } catch (parseError) {
+      console.error("JSON parse error:", parseError);
+      // Nếu không parse được JSON, xem như là chat thông thường
+      responseObject = { action: "chat" };
+    }
+
+    let responseText = "";
 
     if (responseObject.action === "create_transaction") {
       const { type, amount, category, description, date } = responseObject.data;
 
-      const newTransaction = await financialService.createTransaction(
-        userId,
-        type,
-        amount,
-        category,
-        description || "",
-        date
-      );
-      responseText = `I have created the ${type} for you: ${newTransaction.amount} for ${newTransaction.category_id.name}.`;
+      // Validate transaction data
+      if (!type || !amount || !category) {
+        responseText =
+          "Thiếu thông tin cần thiết để tạo giao dịch. Vui lòng cung cấp đầy đủ loại, số tiền và danh mục.";
+      } else {
+        try {
+          const newTransaction = await financialService.createTransaction(
+            userId,
+            type,
+            amount,
+            category,
+            description || "",
+            date
+          );
+          responseText = `Đã tạo ${
+            type === "expense" ? "chi tiêu" : "thu nhập"
+          } cho bạn: ${newTransaction.amount} VNĐ cho ${
+            newTransaction.category_id?.name || category
+          }.`;
+        } catch (transactionError) {
+          console.error("Transaction creation error:", transactionError);
+          responseText =
+            "Xin lỗi, tôi gặp sự cố khi tạo giao dịch. Vui lòng thử lại.";
+        }
+      }
     } else if (responseObject.action === "create_scheduled_report") {
       if (responseObject.missing && responseObject.missing.length > 0) {
         responseText = `Để tạo báo cáo, tôi cần các thông tin sau: email, loại báo cáo (income/expense/total), chế độ gửi (now/weekly/monthly/later), thời gian (nếu cần), ngày (nếu cần). Vui lòng cung cấp đầy đủ thông tin.`;
       } else {
         const { email, reportType, sendMode, time, date } = responseObject.data;
-        const newReport = new ReportSchedule({
-          userId,
-          email,
-          reportType,
-          sendMode,
-          time,
-          date,
-        });
-        await newReport.save();
-        responseText = `Đã tạo báo cáo ${reportType} gửi đến ${email} với chế độ ${sendMode}.`;
+        try {
+          const newReport = new ReportSchedule({
+            userId,
+            email,
+            reportType,
+            sendMode,
+            time,
+            date,
+          });
+          await newReport.save();
+          responseText = `Đã tạo báo cáo ${reportType} gửi đến ${email} với chế độ ${sendMode}.`;
+        } catch (reportError) {
+          console.error("Report creation error:", reportError);
+          responseText =
+            "Xin lỗi, tôi gặp sự cố khi tạo báo cáo. Vui lòng thử lại.";
+        }
       }
     } else if (responseObject.action === "query") {
-      const data = await financialService.executeQuery(
-        userId,
-        responseObject.query
-      );
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const prompt = `
-        You are a helpful assistant that generates a summary of the user's financial data.
-        The user's data is: ${JSON.stringify(data)}
-        Please generate a summary of the user's data in Vietnamese.
-      `;
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      responseText = response.text();
+      try {
+        const data = await financialService.executeQuery(
+          userId,
+          responseObject.query
+        );
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        const prompt = `
+          You are a helpful assistant that generates a summary of the user's financial data.
+          The user's data is: ${JSON.stringify(data)}
+          
+          Please generate a summary of the user's data in Vietnamese with the following formatting:
+          
+          - Use clear, natural language with proper line breaks
+          - Avoid excessive markdown formatting like **bold** or other symbols
+          - Structure the information logically with proper spacing
+          - Make it easy to read with appropriate paragraph breaks
+          - Use bullet points with simple dashes (-) instead of asterisks
+          - Keep the tone professional but friendly
+          
+          Format the response like this example:
+          
+          Dưới đây là bản tóm tắt tình hình tài chính của bạn:
+          
+          Tổng quan:
+          - Thu nhập: 5,750,000 VNĐ
+          - Chi tiêu: 3,793,999 VNĐ
+          
+          Chi tiết thu nhập:
+          - Đầu tư: 5,000,000 VNĐ
+          - Việc làm thêm: 700,000 VNĐ
+          - Tiền bố cho: 50,000 VNĐ
+          
+          Chi tiết chi tiêu:
+          - Mất trộm: 3,000,000 VNĐ
+          - Ăn uống: 84,999 VNĐ
+          - Đi lại/Du lịch: 55,000 VNĐ
+          - Giáo dục: 215,000 VNĐ
+          
+          Nhận xét:
+          Khoản chi tiêu lớn nhất là do bị mất trộm, ảnh hưởng đáng kể đến tình hình tài chính.
+          
+          Chi tiêu cho ăn uống và mua sắm chiếm phần lớn trong các khoản chi tiêu hàng ngày.
+          
+          Thu nhập chủ yếu đến từ đầu tư và các công việc làm thêm.
+          
+          Cần lưu ý khoản mất trộm để có các biện pháp phòng tránh trong tương lai.
+        `;
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        responseText = response.text() || "Không có dữ liệu để hiển thị.";
+      } catch (queryError) {
+        console.error("Query execution error:", queryError);
+        responseText =
+          "Xin lỗi, tôi gặp sự cố khi truy vấn dữ liệu tài chính của bạn.";
+      }
     } else {
-      const chat = model.startChat({
-        history: conversation.messages.map((msg) => ({
-          role: msg.role,
-          parts: [{ text: msg.content }],
-        })),
-        generationConfig: {
-          maxOutputTokens: 100,
-        },
-      });
-      const result = await chat.sendMessage(message);
-      const response = await result.response;
-      responseText = response.text();
+      // Chat thông thường
+      try {
+        const chat = model.startChat({
+          history: conversation.messages.map((msg) => ({
+            role: msg.role,
+            parts: [{ text: msg.content }],
+          })),
+          generationConfig: {
+            maxOutputTokens: 500,
+          },
+        });
+        const result = await chat.sendMessage(message);
+        const response = await result.response;
+        responseText =
+          response.text() ||
+          "Xin lỗi, tôi không thể tạo phản hồi ngay lúc này.";
+      } catch (chatError) {
+        console.error("Chat error:", chatError);
+        responseText = "Xin lỗi, tôi gặp sự cố khi xử lý tin nhắn của bạn.";
+      }
     }
 
+    // Đảm bảo responseText không bao giờ undefined hoặc rỗng
+    if (!responseText || responseText.trim() === "") {
+      responseText =
+        "Xin lỗi, tôi không thể tạo phản hồi phù hợp ngay lúc này.";
+    }
+
+    // Thêm message bot vào conversation với validation
     conversation.messages.push({
       role: "model",
-      content: responseText,
+      content: responseText.substring(0, 2000), // Giới hạn độ dài
       timestamp: new Date(),
     });
 
-    await conversation.save();
+    // Validate conversation trước khi save
+    try {
+      await conversation.save();
+    } catch (saveError) {
+      console.error("Save conversation error:", saveError);
+      // Vẫn trả về response cho user dù có lỗi save
+    }
 
     res.json({
       success: true,
@@ -269,7 +375,7 @@ router.post("/message", async (req, res) => {
     console.error("Chatbot error:", error);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: "Đã xảy ra lỗi khi xử lý tin nhắn của bạn.",
     });
   }
 });
@@ -284,7 +390,7 @@ router.get("/conversation/:conversationId", async (req, res) => {
       messages: conversation?.messages || [],
     });
   } catch (error) {
-    res.status(500).json({ success: false, error: a.message });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -295,10 +401,19 @@ router.post("/upload", upload.single("image"), async (req, res) => {
     const { userId, conversationId } = req.body;
     const imageFile = req.file;
 
+    // Validate input
+    if (!userId || !conversationId) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing required fields: userId or conversationId",
+      });
+    }
+
     if (!imageFile) {
-      return res
-        .status(400)
-        .json({ success: false, error: "No image file uploaded." });
+      return res.status(400).json({
+        success: false,
+        error: "No image file uploaded.",
+      });
     }
 
     let conversation = await Conversation.findOne({ conversationId });
@@ -364,38 +479,84 @@ router.post("/upload", upload.single("image"), async (req, res) => {
     const result = await model.generateContent([prompt, imagePart]);
     const response = await result.response;
     const text = response.text();
-    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
-    const responseObject = JSON.parse(jsonMatch ? jsonMatch[1] : text);
 
-    let responseText;
+    if (!text) {
+      throw new Error("AI response is empty");
+    }
+
+    let responseObject;
+    try {
+      const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
+      responseObject = JSON.parse(jsonMatch ? jsonMatch[1] : text);
+    } catch (parseError) {
+      console.error("JSON parse error:", parseError);
+      responseObject = {
+        action: "chat",
+        message: "Xin lỗi, tôi không thể phân tích hình ảnh này.",
+      };
+    }
+
+    let responseText = "";
 
     if (responseObject.action === "create_transaction") {
       const { type, amount, category, description, date } = responseObject.data;
-      const newTransaction = await financialService.createTransaction(
-        userId,
-        type,
-        amount,
-        category,
-        description || "",
-        date
-      );
-      responseText = `I have created the ${type} for you from the image: ${newTransaction.amount} for ${newTransaction.category_id.name}.`;
+
+      // Validate transaction data
+      if (!type || !amount || !category) {
+        responseText =
+          "Không thể trích xuất đủ thông tin từ hình ảnh. Vui lòng thử với hình ảnh rõ hơn hoặc nhập thủ công.";
+      } else {
+        try {
+          const newTransaction = await financialService.createTransaction(
+            userId,
+            type,
+            amount,
+            category,
+            description || "",
+            date
+          );
+          responseText = `Đã tạo ${
+            type === "expense" ? "chi tiêu" : "thu nhập"
+          } từ hình ảnh: ${newTransaction.amount} VNĐ cho ${
+            newTransaction.category_id?.name || category
+          }.`;
+        } catch (transactionError) {
+          console.error("Transaction creation error:", transactionError);
+          responseText =
+            "Xin lỗi, tôi gặp sự cố khi tạo giao dịch từ hình ảnh.";
+        }
+      }
     } else {
-      responseText = responseObject.message || "I could not process the image.";
+      responseText =
+        responseObject.message ||
+        "Tôi không nhận diện được đây là hóa đơn hay biên lai. Vui lòng thử với hình ảnh khác.";
     }
 
+    // Đảm bảo responseText không bao giờ undefined hoặc rỗng
+    if (!responseText || responseText.trim() === "") {
+      responseText = "Xin lỗi, tôi không thể xử lý hình ảnh này.";
+    }
+
+    // Thêm messages vào conversation với validation
     conversation.messages.push({
       role: "user",
-      content: `[Image uploaded: ${imageFile.originalname}]`,
-      timestamp: new Date(),
-    });
-    conversation.messages.push({
-      role: "model",
-      content: responseText,
+      content: `[Đã tải lên hình ảnh: ${imageFile.originalname}]`,
       timestamp: new Date(),
     });
 
-    await conversation.save();
+    conversation.messages.push({
+      role: "model",
+      content: responseText.substring(0, 2000),
+      timestamp: new Date(),
+    });
+
+    // Validate conversation trước khi save
+    try {
+      await conversation.save();
+    } catch (saveError) {
+      console.error("Save conversation error:", saveError);
+      // Vẫn trả về response cho user dù có lỗi save
+    }
 
     res.json({
       success: true,
@@ -406,7 +567,7 @@ router.post("/upload", upload.single("image"), async (req, res) => {
     console.error("Image upload error:", error);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: "Đã xảy ra lỗi khi xử lý hình ảnh của bạn.",
     });
   }
 });
