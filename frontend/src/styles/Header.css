@@ -1,0 +1,243 @@
+.app-header {
+  width: 100%;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2d3a4d;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+  min-width: 0;
+}
+
+.header-logo {
+  color: #ffffff;
+  font-size: 1.3em;
+  margin: 0;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  margin-right: 40px;
+}
+
+.header-actions a {
+  display: inline-block;
+  width: 100px;             
+  text-align: center;
+  padding: 7px 0;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+
+
+.register-btn-1 {
+  background-color: #f8c2b7;
+  color: #000;
+}
+
+.login-btn-1 {
+  background-color: #f8c2b7;
+  color: #000;
+}
+
+
+.register-btn-1:not(.active):hover,
+.login-btn-1:not(.active):hover {
+  background-color: #F72585;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+
+.login-btn-1.active {
+  background-color: #F72585;
+  color: #fff;
+}
+
+
+.register-btn-1.active {
+  background-color: #F72585;
+  color: #fff;
+}
+
+/* Header Search */
+.header-search {
+  flex: 1;
+  max-width: 280px;
+  min-width: 150px;
+}
+
+.header-search-input {
+  width: 100%;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  background-color: #ffffff;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.header-search-input::placeholder {
+  color: #95a5a6;
+}
+
+.header-search-input:focus {
+  background-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+.header-icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f5d0d8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.header-icon-btn:hover {
+  background-color: #f0b8c5;
+  transform: scale(1.05);
+}
+
+.header-icon-btn svg {
+  color: #8b4f63;
+}
+
+.header-icon-btn:hover svg {
+  color: #6d3e4f;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 5px;
+  border-radius: 10px;
+  min-width: 16px;
+  text-align: center;
+}
+
+.header-avatar-wrapper {
+  position: relative;
+}
+
+.header-avatar-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: #f5d0d8;
+  padding: 2px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.header-avatar-btn:hover {
+  transform: scale(1.05);
+  background: #f0b8c5;
+}
+
+.header-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Dropdown Menu */
+.header-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+  padding: 8px 0;
+  z-index: 1000;
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #2c3e50;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.dropdown-item svg {
+  color: #7f8c8d;
+  flex-shrink: 0;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.dropdown-item.logout {
+  color: #e74c3c;
+  border-top: 1px solid #ecf0f1;
+}
+
+.dropdown-item.logout svg {
+  color: #e74c3c;
+}
+
+.dropdown-item.logout:hover {
+  background-color: #fee;
+}

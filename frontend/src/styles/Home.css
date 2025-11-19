@@ -1,0 +1,207 @@
+.home-container {
+  text-align: center;
+  background: url("../components/assets/images/anh-may-dep-cute.jpg") no-repeat center center/cover;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+  color: #222;
+}
+
+.home-footer {
+  background-color: #222735;
+  box-shadow: 0px 4px 12px 4px rgba(0, 0, 0, 0.25);
+  padding: 10px;
+  text-align: center;
+  color: #ffffff;
+  font-size: 18px;
+  margin-top: auto;
+
+}
+
+.welcome-text {
+  font-weight: 700;
+  font-size: 1.6rem;
+  margin-top: 60px;
+  margin-bottom: 25px;
+  color: #000;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.chart-section {
+  background: #f8f8f8;
+  border-radius: 20px;
+  padding: 30px 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 850px;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+  min-height: 400px;
+}
+
+.charts-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.chart-card {
+  background: #fff;
+  border: 2px;
+  border-radius: 16px;
+  padding: 25px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 260px;
+  transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+  transform: translateY(-5px);
+}
+
+.chart-card-wide {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  max-width: 700px;
+  width: 100%;
+  height: auto;
+  border: 2px;
+  border-radius: 16px;
+  background: #fff;
+  padding: 25px 40px;
+}
+
+.chart-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.chart-title.correlation {
+  color: #e91e63;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.chart-info {
+  background: #f8f9fa;
+  border: 1px solid #ffc1d6;
+  border-radius: 12px;
+  padding: 20px;
+  min-width: 180px;
+  text-align: left;
+}
+
+@media (max-width: 750px) {
+  .chart-card-wide {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .chart-info {
+    text-align: center;
+    min-width: 0;
+    width: auto;
+  }
+}
+
+.chart-info p {
+  margin: 6px 0;
+  font-weight: 500;
+}
+
+.chart-dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  margin: 0 6px;
+  background: #f8a1c4;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background: #ff5a8b;
+  transform: scale(1.2);
+}
+
+.button-section {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+.feature-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 5px 20px rgba(240, 98, 146, 0.2);
+  width: 243px;
+  height: 243px;
+  text-align: center;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(240, 98, 146, 0.4);
+}
+
+.feature-card img {
+  width: 75px;
+  height: 75px;
+  margin-bottom: 12px;
+  object-fit: contain;
+}
+
+.feature-card p {
+  font-weight: 600;
+  color: #333;
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+footer {
+  margin-top: 60px;
+  font-size: 0.9rem;
+  color: white;
+  background-color: #1f1f1f;
+  padding: 10px 0;
+}

@@ -1,0 +1,39 @@
+.app-container {
+  text-align: center;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.header-title h2 {
+  margin: 0;
+}
+
+.header-actions .register-btn {
+  background-color: #ff69b4;
+  color: #fff;
+  border: none;
+  padding: 5px 15px;
+  margin-right: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.header-actions .login-btn {
+  background-color: #ff1493;
+  color: #fff;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}

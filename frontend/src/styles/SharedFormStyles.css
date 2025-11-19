@@ -1,0 +1,268 @@
+/* Styles for common elements within Expense.jsx and Income.jsx */
+/* These assume they are inside the '.expense-form' container from TransactionPage.css */
+
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-bottom: 18px;
+  width: 100%;
+}
+
+.form-group label {
+  width: 140px; /* Fixed width for labels */
+  color: #333;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0; /* Prevent label from shrinking */
+}
+
+/* Style all relevant input types consistently */
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group .date-picker { /* Target by class */
+  flex: 1; /* Allow input to grow */
+  padding: 11px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  background-color: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-size: 15px;
+  min-width: 150px;
+  box-sizing: border-box; /* Include padding/border in width */
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group .date-picker:focus {
+  border-color: #f06292; /* Match active tab color */
+  box-shadow: 0 0 4px rgba(240, 98, 146, 0.4);
+}
+
+/* Date Navigation Styles */
+.date-navigation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1; /* Take remaining space in the form-group */
+  min-width: 200px; /* Prevent shrinking too much */
+}
+
+/* Specific styling for the date input within navigation */
+.date-navigation input.date-picker {
+  /* Inherits general input styles */
+  text-align: center;
+  padding: 9px 12px;
+  font-size: 14px;
+  border: 1px solid #ffcdd2;
+  background-color: #fff;
+}
+
+.date-navigation input.date-picker:focus {
+  border-color: #f06292;
+  box-shadow: 0 0 4px rgba(240, 98, 146, 0.4);
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: #f48fb1;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 5px;
+  flex-shrink: 0; /* Prevent buttons shrinking */
+}
+.nav-btn:hover {
+  color: #ec407a;
+}
+
+/* Category Styles */
+.category-title {
+  font-weight: 600;
+  margin-top: 25px;
+  margin-bottom: 15px;
+  color: #444;
+  width: 100%;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Responsive */
+  gap: 16px;
+  width: 100%;
+}
+
+.category-card,
+.add-card {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.category-card img.category-icon { /* Specific selector */
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  transition: transform 0.25s;
+}
+
+.category-card p {
+  font-size: 13px;
+  color: #333;
+  margin: 0;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.category-card:hover {
+  border-color: #f06292;
+  transform: translateY(-4px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+}
+.category-card:hover img.category-icon {
+  transform: scale(1.08);
+}
+
+.category-card.selected {
+  border: 2px solid #ec407a;
+  box-shadow: 0 0 8px rgba(240, 98, 146, 0.4);
+  background: #fce4ec;
+}
+
+.add-card {
+  border: 2px dashed #f48fb1;
+  justify-content: center;
+}
+.add-card:hover {
+  background-color: #fce4ec;
+  border-color: #f06292;
+}
+.add-icon {
+  font-size: 28px;
+  color: #f48fb1;
+   transition: color 0.25s ease;
+}
+.add-card:hover .add-icon {
+  color: #ec407a;
+}
+
+/* Submit Button Styles */
+.submit-btn {
+  margin-top: 30px;
+  background-color: #f06292;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 25px;
+  cursor: pointer;
+  font-weight: 600;
+  align-self: center; /* Center button within its container */
+  transition: background-color 0.2s, transform 0.1s;
+  font-size: 15px;
+}
+.submit-btn:hover {
+  background-color: #ec407a;
+}
+.submit-btn:active {
+    transform: scale(0.98);
+}
+
+/* Modal styles (Keep if AddCategoryModal uses them) */
+/* Consider moving to AddCategoryModal.css */
+/* Example placeholder */
+.modal-overlay {
+ position: fixed;
+ inset: 0;
+ background: rgba(0, 0, 0, 0.4);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ z-index: 100;
+}
+
+/* Example placeholder */
+.modal-content {
+ background: #fff;
+ border-radius: 14px;
+ padding: 25px 30px;
+ width: 90%;
+ max-width: 500px; /* Adjust max-width for modal */
+ box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+ /* animation: fadeIn 0.3s ease; */ /* Defined in TransactionPage.css if needed globally */
+}
+
+/* Responsive adjustments for form elements */
+@media (max-width: 900px) {
+  .category-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 14px;
+  }
+  .form-group label {
+    width: 120px; /* Slightly narrower label */
+  }
+}
+
+@media (max-width: 600px) {
+  .form-group {
+    flex-direction: column; /* Stack label and input */
+    align-items: stretch; /* Make items full width */
+    gap: 8px;
+  }
+  .form-group label {
+    width: 100%; /* Label takes full width */
+    margin-bottom: 2px;
+    font-size: 13px;
+  }
+  /* Ensure all inputs and date nav take full width */
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group .date-picker, /* Target by class */
+  .date-navigation {
+    width: 100%;
+  }
+  .date-navigation {
+      gap: 8px;
+  }
+
+  .category-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); /* Ensure good fit */
+    gap: 12px;
+  }
+  .category-card img.category-icon {
+    width: 45px; /* Smaller icons */
+    height: 45px;
+    margin-bottom: 6px;
+  }
+   .category-card p {
+       font-size: 11px; /* Smaller text */
+   }
+  .submit-btn {
+    width: 100%;
+    padding: 11px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 400px) {
+   /* No specific changes needed if using auto-fill grid */
+}
+
