@@ -95,7 +95,7 @@ const LoginForm = () => {
         <div className="input-group">
           <input
             type="text"
-            placeholder="Username"
+            placeholder="Username or email"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
@@ -118,9 +118,6 @@ const LoginForm = () => {
           </span>
         </div>
 
-        <a href="#" className="forgot-password-link">
-          Forgot password?
-        </a>
         <button 
           type="submit" 
           className="login-btn"
@@ -131,10 +128,6 @@ const LoginForm = () => {
         </button>
       </form>
       <div className="divider"></div>
-      <div className="social-login-section">
-        <button className="google-btn">Google</button>
-        <button className="facebook-btn">Facebook</button>
-      </div>
       <p className="signup-prompt">
         No account?{" "}
         <Link to="/register" className="signup-link">
