@@ -4,6 +4,46 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Category = require("../models/Category");
 const router = express.Router();
+const nodemailer = require("nodemailer");
+
+
+const verificationCodes = {};
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.SYSTEM_EMAIL, // email gửi
+    pass: process.env.SYSTEM_EMAIL_PASSWORD, // password app Gmail
+  },
+});
+
+// Gửi mã xác thực
+router.post("/send-verification", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required!" });
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ message: "Email already registered!" });
+
+    // Tạo mã 6 chữ số
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    verificationCodes[email] = code;
+
+    // Gửi email
+    await transporter.sendMail({
+      from: process.env.SYSTEM_EMAIL,
+      to: email,
+      subject: "Your verification code for ExpenseMind",
+      text: `Your verification code is: ${code}`,
+    });
+
+    res.json({ message: "Verification code sent to your email!" });
+  } catch (error) {
+    console.error("Send verification error:", error);
+    res.status(500).json({ message: "Server error!" });
+  }
+});
 
 router.post("/register", async (req, res) => {
   try {
@@ -63,6 +103,10 @@ router.post("/register", async (req, res) => {
         user_id: newUser._id,
       }))
     );
+
+
+      delete verificationCodes[email];
+
 
     res.status(201).json({
       message: "Registration successful!",
