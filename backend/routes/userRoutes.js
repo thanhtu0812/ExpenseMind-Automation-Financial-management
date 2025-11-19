@@ -5,8 +5,6 @@ const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 
-
-
 const auth = (req, res, next) => {
   const authHeader = req.header("Authorization");
   if (!authHeader) {
@@ -16,7 +14,7 @@ const auth = (req, res, next) => {
   const token = authHeader.replace("Bearer ", "");
   try {
     const decoded = jwt.verify(token, "secretkey");
-    req.user = decoded; 
+    req.user = decoded;
     next();
   } catch (error) {
     return res.status(401).json({ message: "Invalid token!" });
@@ -36,7 +34,7 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
-// GET: Get user list
+// Get user list
 router.get("/", auth, async (req, res) => {
   try {
     const users = await User.find().select("-password"); // Get all info except password
@@ -47,11 +45,20 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-// PUT: Update user info
+// Update user info
 router.put("/:id", auth, async (req, res) => {
   try {
-    const {id } = req.params;
-    const { bio, avatar, dob, email, password, currentPassword, gender, newUsername } = req.body;
+    const { id } = req.params;
+    const {
+      bio,
+      avatar,
+      dob,
+      email,
+      password,
+      currentPassword,
+      gender,
+      newUsername,
+    } = req.body;
 
     let user = await User.findById(id);
 
@@ -74,8 +81,8 @@ router.put("/:id", auth, async (req, res) => {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
     }
-// Đổi username cập nhật 
-     if (newUsername && newUsername !== user.username) {
+    // Update username
+    if (newUsername && newUsername !== user.username) {
       const existingUser = await User.findOne({ username: newUsername });
       if (existingUser) {
         return res.status(400).json({ message: "Username already exists!" });
@@ -91,8 +98,7 @@ router.put("/:id", auth, async (req, res) => {
 
     await user.save();
 
-    // Trả về user mới
-   res.json({
+    res.json({
       message: "Update successful!",
       user: {
         username: user.username,
@@ -109,7 +115,7 @@ router.put("/:id", auth, async (req, res) => {
   }
 });
 
-// DELETE: Delete user
+// Delete user
 router.delete("/:username", async (req, res) => {
   try {
     const deletedUser = await User.findOneAndDelete({
@@ -126,14 +132,13 @@ router.delete("/:username", async (req, res) => {
   }
 });
 
-// File storage configuration
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // API to update avatar
 router.put("/:id/avatar", upload.single("avatar"), async (req, res) => {
   try {
-    const {id } = req.params;
+    const { id } = req.params;
     if (!req.file)
       return res.status(400).json({ message: "Please select an image!" });
 

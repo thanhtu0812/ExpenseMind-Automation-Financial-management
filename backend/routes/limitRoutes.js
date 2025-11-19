@@ -4,7 +4,7 @@ const Limit = require("../models/Limit");
 const Transaction = require("../models/Transaction");
 const router = express.Router();
 
-// 📌 Middleware to verify JWT
+// Middleware to verify JWT
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ message: "Token required!" });
@@ -18,7 +18,7 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// 🟢 POST: Set new limit
+//Set new limit
 router.post("/", authenticate, async (req, res) => {
   try {
     const { amount, startDate, endDate } = req.body;
@@ -26,7 +26,7 @@ router.post("/", authenticate, async (req, res) => {
     if (!amount || !startDate || !endDate)
       return res.status(400).json({ message: "Missing required fields!" });
 
-    // Calculate expenses within range
+    //Calculate expenses within range
     const expenses = await Transaction.find({
       user_id: req.userId,
       type: "expense",
@@ -57,7 +57,7 @@ router.post("/", authenticate, async (req, res) => {
   }
 });
 
-// 🟡 GET: Get all limits for user
+//Get all limits for user
 router.get("/:userId", authenticate, async (req, res) => {
   try {
     const limits = await Limit.find({ userId: req.params.userId }).sort({
@@ -70,7 +70,7 @@ router.get("/:userId", authenticate, async (req, res) => {
   }
 });
 
-// 🔵 GET: Get active limit (if any)
+//Get active limit (if any)
 router.get("/active/current", authenticate, async (req, res) => {
   try {
     const now = new Date();
@@ -88,7 +88,7 @@ router.get("/active/current", authenticate, async (req, res) => {
   }
 });
 
-// 🔴 POST: Update remaining after a new expense/income
+//Update remaining after a new expense/income
 router.post("/updateRemaining", authenticate, async (req, res) => {
   try {
     const { remaining } = req.body;

@@ -50,7 +50,7 @@ const Calendar = () => {
     )}-${String(d.getDate()).padStart(2, "0")}`;
   };
 
-  // Thêm useEffect để cảnh báo khi rời trang
+  // Cảnh báo khi rời trang
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (hasUnsavedChanges) {
@@ -242,7 +242,7 @@ const Calendar = () => {
     return days;
   };
 
-  // Hàm kiểm tra form reminder có thay đổi không
+  // Kiểm tra form reminder có thay đổi không
   const hasFormChanges = () => {
     return (
       formData.title.trim() !== "" ||
@@ -252,7 +252,7 @@ const Calendar = () => {
     );
   };
 
-  // Hàm kiểm tra form transaction có thay đổi không
+  // Kiểm tra form transaction có thay đổi không
   const hasTransactionFormChanges = () => {
     return (
       transactionForm.amount !== "" ||
@@ -261,7 +261,7 @@ const Calendar = () => {
     );
   };
 
-  // Hàm hiển thị cảnh báo
+  // Hiển thị cảnh báo
   const showUnsavedChangesAlert = (action) => {
     return window.confirm(
       "Bạn có thay đổi chưa lưu. Nếu tiếp tục, thay đổi sẽ bị mất. Bạn có chắc chắn muốn tiếp tục?"
@@ -329,7 +329,7 @@ const Calendar = () => {
     }
   };
 
-  // Hàm reset tất cả forms
+  //Reset tất cả forms
   const resetForms = () => {
     setShowAddForm(false);
     setEditingReminder(null);
@@ -349,7 +349,6 @@ const Calendar = () => {
     setHasUnsavedChanges(false);
   };
 
-  // REMINDER FUNCTIONS
   const handleAddReminder = async () => {
     if (!formData.title.trim()) {
       alert("Vui lòng nhập tiêu đề reminder!");
@@ -435,7 +434,6 @@ const Calendar = () => {
 
     const token = localStorage.getItem("token");
 
-    // Sử dụng ngày từ form hoặc ngày đã chọn
     let selectedFullDate;
     if (formData.date) {
       selectedFullDate = new Date(formData.date);
@@ -447,7 +445,6 @@ const Calendar = () => {
       );
     }
 
-    // Kết hợp với time từ form
     const [hours, minutes] = formData.time.split(":");
     selectedFullDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
@@ -943,7 +940,6 @@ const Calendar = () => {
                       }
                       className="form-input"
                     />
-                    {/* Cập nhật: Time, Date, Repeat cùng hàng */}
                     <div className="form-row triple">
                       <label>
                         Time:

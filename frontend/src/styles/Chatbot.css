@@ -93,7 +93,7 @@
 }
 
 .header-spacer {
-  width: 40px; /* Same as back button for balance */
+  width: 40px;
 }
 
 .chatbot-container {
@@ -125,13 +125,12 @@
   animation: fadeIn 0.3s ease-in;
 }
 
-/* Thêm vào file Chatbot.css */
 .message-content p {
   margin: 0;
   font-size: 16px;
   color: #000000;
   line-height: 1.6;
-  white-space: pre-line; /* Quan trọng: giữ nguyên xuống dòng */
+  white-space: pre-line;
   word-wrap: break-word;
 }
 
@@ -145,13 +144,11 @@
   line-height: 1.6;
 }
 
-/* Đảm bảo tin nhắn bot có khoảng cách dễ đọc */
 .bot-message .message-content {
   background-color: #f8f9fa;
   border-color: #e9ecef;
 }
 
-/* Style cho các danh sách trong tin nhắn */
 .message-content ul {
   margin: 8px 0;
   padding-left: 20px;
@@ -161,7 +158,6 @@
   margin-bottom: 4px;
 }
 
-/* Phân cách các phần trong tin nhắn */
 .message-content p + p {
   margin-top: 12px;
 }
@@ -542,5 +538,5 @@
   border-radius: 8px;
   margin-bottom: 8px;
   object-fit: cover;
-  display: block; 
+  display: block;
 }

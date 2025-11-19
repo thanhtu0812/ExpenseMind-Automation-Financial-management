@@ -4,16 +4,15 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-// 📌 Lấy danh sách category theo user (và type nếu có)
+//List category
 router.get("/", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Token là bắt buộc!" });
 
     const decoded = jwt.verify(token, "secretkey");
-    const { type } = req.query; // ✅ Lấy type từ query (income/expense)
+    const { type } = req.query;
 
-    // Điều kiện lọc
     const filter = {
       user_id: new mongoose.Types.ObjectId(decoded.userId),
     };
@@ -35,7 +34,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 📌 Thêm category mới
+//Create category
 router.post("/", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];

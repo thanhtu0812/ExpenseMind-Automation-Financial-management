@@ -5,10 +5,9 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 const fs = require("fs");
-const { router: reportRoutes } = require('./routes/reportRoutes');
-const { startScheduler } = require('./scheduler');
+const { router: reportRoutes } = require("./routes/reportRoutes");
+const { startScheduler } = require("./scheduler");
 
-// Khởi động reminder service
 require("./services/reminderService");
 
 const app = express();

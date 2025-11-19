@@ -11,7 +11,7 @@ const AddCategoryModal = ({ onClose, onSave }) => {
 
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-  // 🔹 Tải danh sách icon khi mở modal
+  //Tải danh sách icon khi mở modal
   useEffect(() => {
     const fetchIcons = async () => {
       try {
@@ -29,7 +29,7 @@ const AddCategoryModal = ({ onClose, onSave }) => {
     fetchIcons();
   }, [API_URL, onClose]);
 
-  // 🔹 Gửi dữ liệu category mới cho component cha (Expense hoặc Income)
+  //Gửi dữ liệu category mới cho component cha (Expense hoặc Income)
   const handleSave = async () => {
     if (!name || !selectedIcon) {
       return alert("Vui lòng nhập tên và chọn icon.");
@@ -50,7 +50,9 @@ const AddCategoryModal = ({ onClose, onSave }) => {
   return (
     <div className="add-category-modal">
       <div className="modal-content">
-        <button className="close-btn" onClick={onClose}>×</button>
+        <button className="close-btn" onClick={onClose}>
+          ×
+        </button>
         <h3 className="modal-title">Add New Category</h3>
 
         <label className="input-label">Name</label>
@@ -70,7 +72,9 @@ const AddCategoryModal = ({ onClose, onSave }) => {
             availableIcons.map((iconUrl, index) => (
               <div
                 key={index}
-                className={`icon-box ${selectedIcon === iconUrl ? "selected" : ""}`}
+                className={`icon-box ${
+                  selectedIcon === iconUrl ? "selected" : ""
+                }`}
                 onClick={() => setSelectedIcon(iconUrl)}
               >
                 <img

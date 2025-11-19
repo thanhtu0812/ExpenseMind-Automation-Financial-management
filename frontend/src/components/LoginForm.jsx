@@ -43,23 +43,20 @@ const LoginForm = () => {
         throw new Error(data.message || "Login failed!");
       }
 
-      // Save info to localStorage
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("userId", data.userId);
-    localStorage.setItem("user", JSON.stringify({
-    userId: data.userId,
-    username: data.username,
-    email: data.email,
-    role: data.role
-}));
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userId", data.userId);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          userId: data.userId,
+          username: data.username,
+          email: data.email,
+          role: data.role,
+        })
+      );
 
-        localStorage.setItem("username", data.username); //hiển thị đúng dòng Welcome username
-
-
-      // Trigger custom event to update Header
-      window.dispatchEvent(new CustomEvent('loginSuccess'));
-
-      // Show success modal
+      localStorage.setItem("username", data.username);
+      window.dispatchEvent(new CustomEvent("loginSuccess"));
       setShowSuccessModal(true);
     } catch (error) {
       setError(error.message || "An error occurred. Please try again!");
@@ -76,17 +73,19 @@ const LoginForm = () => {
       <h1 className="welcome-text">Welcome back!</h1>
 
       {error && (
-        <div style={{ 
-          color: "red", 
-          backgroundColor: "#ffe6e6",
-          padding: "10px",
-          borderRadius: "5px",
-          marginBottom: "15px", 
-          textAlign: "center",
-          fontSize: "14px",
-          maxWidth: "400px",
-          margin: "0 auto 15px"
-        }}>
+        <div
+          style={{
+            color: "red",
+            backgroundColor: "#ffe6e6",
+            padding: "10px",
+            borderRadius: "5px",
+            marginBottom: "15px",
+            textAlign: "center",
+            fontSize: "14px",
+            maxWidth: "400px",
+            margin: "0 auto 15px",
+          }}
+        >
           {error}
         </div>
       )}
@@ -118,11 +117,14 @@ const LoginForm = () => {
           </span>
         </div>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="login-btn"
           disabled={loading}
-          style={{ opacity: loading ? 0.6 : 1, cursor: loading ? "not-allowed" : "pointer" }}
+          style={{
+            opacity: loading ? 0.6 : 1,
+            cursor: loading ? "not-allowed" : "pointer",
+          }}
         >
           {loading ? "Logging in..." : "Login"}
         </button>

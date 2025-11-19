@@ -1,6 +1,3 @@
-/* Styles for common elements within Expense.jsx and Income.jsx */
-/* These assume they are inside the '.expense-form' container from TransactionPage.css */
-
 .form-group {
   display: flex;
   flex-wrap: wrap;
@@ -12,18 +9,17 @@
 }
 
 .form-group label {
-  width: 140px; /* Fixed width for labels */
+  width: 140px;
   color: #333;
   font-weight: 500;
   white-space: nowrap;
-  flex-shrink: 0; /* Prevent label from shrinking */
+  flex-shrink: 0;
 }
 
-/* Style all relevant input types consistently */
 .form-group input[type="text"],
 .form-group input[type="number"],
-.form-group .date-picker { /* Target by class */
-  flex: 1; /* Allow input to grow */
+.form-group .date-picker {
+  flex: 1;
   padding: 11px 14px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -32,28 +28,25 @@
   transition: border-color 0.2s, box-shadow 0.2s;
   font-size: 15px;
   min-width: 150px;
-  box-sizing: border-box; /* Include padding/border in width */
+  box-sizing: border-box;
 }
 
 .form-group input[type="text"]:focus,
 .form-group input[type="number"]:focus,
 .form-group .date-picker:focus {
-  border-color: #f06292; /* Match active tab color */
+  border-color: #f06292;
   box-shadow: 0 0 4px rgba(240, 98, 146, 0.4);
 }
 
-/* Date Navigation Styles */
 .date-navigation {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex: 1; /* Take remaining space in the form-group */
-  min-width: 200px; /* Prevent shrinking too much */
+  flex: 1;
+  min-width: 200px;
 }
 
-/* Specific styling for the date input within navigation */
 .date-navigation input.date-picker {
-  /* Inherits general input styles */
   text-align: center;
   padding: 9px 12px;
   font-size: 14px;
@@ -74,13 +67,13 @@
   cursor: pointer;
   transition: color 0.2s;
   padding: 5px;
-  flex-shrink: 0; /* Prevent buttons shrinking */
+  flex-shrink: 0;
 }
+
 .nav-btn:hover {
   color: #ec407a;
 }
 
-/* Category Styles */
 .category-title {
   font-weight: 600;
   margin-top: 25px;
@@ -91,7 +84,7 @@
 
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Responsive */
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 16px;
   width: 100%;
 }
@@ -114,7 +107,7 @@
   overflow: hidden;
 }
 
-.category-card img.category-icon { /* Specific selector */
+.category-card img.category-icon {
   width: 60px;
   height: 60px;
   object-fit: contain;
@@ -138,6 +131,7 @@
   transform: translateY(-4px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
 }
+
 .category-card:hover img.category-icon {
   transform: scale(1.08);
 }
@@ -152,20 +146,22 @@
   border: 2px dashed #f48fb1;
   justify-content: center;
 }
+
 .add-card:hover {
   background-color: #fce4ec;
   border-color: #f06292;
 }
+
 .add-icon {
   font-size: 28px;
   color: #f48fb1;
-   transition: color 0.25s ease;
+  transition: color 0.25s ease;
 }
+
 .add-card:hover .add-icon {
   color: #ec407a;
 }
 
-/* Submit Button Styles */
 .submit-btn {
   margin-top: 30px;
   background-color: #f06292;
@@ -175,86 +171,80 @@
   padding: 12px 25px;
   cursor: pointer;
   font-weight: 600;
-  align-self: center; /* Center button within its container */
+  align-self: center;
   transition: background-color 0.2s, transform 0.1s;
   font-size: 15px;
 }
+
 .submit-btn:hover {
   background-color: #ec407a;
 }
+
 .submit-btn:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
 }
 
-/* Modal styles (Keep if AddCategoryModal uses them) */
-/* Consider moving to AddCategoryModal.css */
-/* Example placeholder */
 .modal-overlay {
- position: fixed;
- inset: 0;
- background: rgba(0, 0, 0, 0.4);
- display: flex;
- align-items: center;
- justify-content: center;
- z-index: 100;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
 }
 
-/* Example placeholder */
 .modal-content {
- background: #fff;
- border-radius: 14px;
- padding: 25px 30px;
- width: 90%;
- max-width: 500px; /* Adjust max-width for modal */
- box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
- /* animation: fadeIn 0.3s ease; */ /* Defined in TransactionPage.css if needed globally */
+  background: #fff;
+  border-radius: 14px;
+  padding: 25px 30px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
-/* Responsive adjustments for form elements */
 @media (max-width: 900px) {
   .category-grid {
     grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
     gap: 14px;
   }
   .form-group label {
-    width: 120px; /* Slightly narrower label */
+    width: 120px;
   }
 }
 
 @media (max-width: 600px) {
   .form-group {
-    flex-direction: column; /* Stack label and input */
-    align-items: stretch; /* Make items full width */
+    flex-direction: column;
+    align-items: stretch;
     gap: 8px;
   }
   .form-group label {
-    width: 100%; /* Label takes full width */
+    width: 100%;
     margin-bottom: 2px;
     font-size: 13px;
   }
-  /* Ensure all inputs and date nav take full width */
   .form-group input[type="text"],
   .form-group input[type="number"],
-  .form-group .date-picker, /* Target by class */
+  .form-group .date-picker,
   .date-navigation {
     width: 100%;
   }
   .date-navigation {
-      gap: 8px;
+    gap: 8px;
   }
-
   .category-grid {
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); /* Ensure good fit */
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
     gap: 12px;
   }
   .category-card img.category-icon {
-    width: 45px; /* Smaller icons */
+    width: 45px;
     height: 45px;
     margin-bottom: 6px;
   }
-   .category-card p {
-       font-size: 11px; /* Smaller text */
-   }
+  .category-card p {
+    font-size: 11px;
+  }
   .submit-btn {
     width: 100%;
     padding: 11px;
@@ -263,6 +253,4 @@
 }
 
 @media (max-width: 400px) {
-   /* No specific changes needed if using auto-fill grid */
 }
-

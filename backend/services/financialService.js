@@ -176,14 +176,14 @@ async function createTransaction(
     categoryName = "Khác"; // fallback
   }
 
-  // 1️⃣ Trước tiên tìm Category dành cho user
+  // Trước tiên tìm Category dành cho user
   let category = await Category.findOne({
     user_id: new mongoose.Types.ObjectId(userId),
     type,
     name: categoryName,
   });
 
-  // 2️⃣ Nếu không có, thử tìm bản default cùng tên (nếu sử dụng is_default)
+  // Nếu không có, thử tìm bản default cùng tên (nếu sử dụng is_default)
   if (!category) {
     category = await Category.findOne({
       is_default: true,
@@ -192,14 +192,14 @@ async function createTransaction(
     });
   }
 
-  // 3️⃣ Nếu vẫn không có, tạo mới Category cho user
+  // Nếu vẫn không có, tạo mới Category cho user
   if (!category) {
     category = new Category({
       name: categoryName,
       type,
       user_id: new mongoose.Types.ObjectId(userId),
       is_default: true,
-      icon: "/icons/icon-21.png", // icon fallback
+      icon: "/icons/icon-21.png",
     });
 
     try {
@@ -210,7 +210,6 @@ async function createTransaction(
     } catch (err) {
       console.error("[createTransaction] Error creating new category:", err);
 
-      // nếu bị lỗi unique do race condition thì fetch lại
       category = await Category.findOne({
         user_id: new mongoose.Types.ObjectId(userId),
         type,
@@ -221,7 +220,7 @@ async function createTransaction(
     }
   }
 
-  // 4️⃣ Tạo transaction với ID category hợp lệ
+  // Tạo transaction với ID category hợp lệ
   const newTransaction = new Transaction({
     amount,
     date: transactionDate ? new Date(transactionDate) : new Date(),

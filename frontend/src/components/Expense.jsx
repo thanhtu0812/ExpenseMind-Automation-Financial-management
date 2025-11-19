@@ -16,7 +16,7 @@ const Expense = ({ overviewData }) => {
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-  // 🔹 Lấy danh sách category loại "expense"
+  //Lấy danh sách category loại "expense"
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -27,7 +27,10 @@ const Expense = ({ overviewData }) => {
     const fetchCategories = async () => {
       try {
         const config = { headers: { Authorization: `Bearer ${token}` } };
-        const res = await axios.get(`${API_URL}/api/categories?type=expense`, config);
+        const res = await axios.get(
+          `${API_URL}/api/categories?type=expense`,
+          config
+        );
         setCategories(res.data);
       } catch (err) {
         console.error("Error fetching categories:", err);
@@ -37,7 +40,6 @@ const Expense = ({ overviewData }) => {
     fetchCategories();
   }, [API_URL, navigate]);
 
-  // 🔹 Điều hướng ngày
   const formatDate = (date) => date.toISOString().split("T")[0];
   const handlePrevDate = () => {
     const newDate = new Date(date);
@@ -50,7 +52,7 @@ const Expense = ({ overviewData }) => {
     setDate(newDate);
   };
 
-  // 🔹 Thêm category mới (gắn type=expense)
+  // Thêm category mới (gắn type=expense)
   const handleAddCategory = async (categoryData) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -61,7 +63,7 @@ const Expense = ({ overviewData }) => {
     try {
       const response = await axios.post(
         `${API_URL}/api/categories`,
-        { ...categoryData, type: "expense" }, // ✅ thêm type vào body
+        { ...categoryData, type: "expense" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -73,7 +75,7 @@ const Expense = ({ overviewData }) => {
     }
   };
 
-  // 🔹 Thêm expense mới
+  // Thêm expense mới
   const handleSubmit = async () => {
     if (!amount || !selectedCategory) {
       alert("Please fill in all required fields!");
@@ -111,7 +113,6 @@ const Expense = ({ overviewData }) => {
 
   return (
     <>
-      {/* 📅 Ngày */}
       <div className="form-group">
         <label>Day</label>
         <div className="date-navigation">
@@ -130,7 +131,6 @@ const Expense = ({ overviewData }) => {
         </div>
       </div>
 
-      {/* 📝 Ghi chú */}
       <div className="form-group">
         <label>Note</label>
         <input
@@ -141,7 +141,6 @@ const Expense = ({ overviewData }) => {
         />
       </div>
 
-      {/* 💰 Số tiền */}
       <div className="form-group">
         <label>Amount</label>
         <input
@@ -152,22 +151,29 @@ const Expense = ({ overviewData }) => {
         />
       </div>
 
-      {/* 🗂️ Danh mục */}
       <p className="category-title">Categories</p>
       <div className="category-grid">
         {categories.map((cat) => (
           <div
             key={cat._id}
-            className={`category-card ${selectedCategory?._id === cat._id ? "selected" : ""}`}
+            className={`category-card ${
+              selectedCategory?._id === cat._id ? "selected" : ""
+            }`}
             onClick={() => setSelectedCategory(cat)}
           >
-            <img src={`${API_URL}${cat.icon}`} alt={cat.name} className="category-icon" />
+            <img
+              src={`${API_URL}${cat.icon}`}
+              alt={cat.name}
+              className="category-icon"
+            />
             <p>{cat.name}</p>
           </div>
         ))}
 
-        {/* ➕ Thêm category */}
-        <div className="category-card add-card" onClick={() => setShowAddModal(true)}>
+        <div
+          className="category-card add-card"
+          onClick={() => setShowAddModal(true)}
+        >
           <FaPlusCircle className="add-icon" />
         </div>
       </div>
@@ -183,7 +189,10 @@ const Expense = ({ overviewData }) => {
       </button>
 
       {showAddModal && (
-        <AddCategoryModal onClose={() => setShowAddModal(false)} onSave={handleAddCategory} />
+        <AddCategoryModal
+          onClose={() => setShowAddModal(false)}
+          onSave={handleAddCategory}
+        />
       )}
     </>
   );

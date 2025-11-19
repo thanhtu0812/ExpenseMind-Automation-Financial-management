@@ -38,7 +38,6 @@ const ReminderSchema = new mongoose.Schema(
   }
 );
 
-// Tạo index để tối ưu truy vấn
 ReminderSchema.index({ user_id: 1, date: 1 });
 
 module.exports = mongoose.model("Reminder", ReminderSchema);

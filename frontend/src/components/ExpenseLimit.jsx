@@ -24,7 +24,7 @@ const ExpenseLimit = () => {
     setter(newDate);
   };
 
-  // 🟢 Fetch total expense within selected range
+  // Fetch total expense within selected range
   const fetchExpensesInRange = async (token, start, end) => {
     try {
       const response = await fetch(
@@ -45,61 +45,61 @@ const ExpenseLimit = () => {
     return 0;
   };
 
-  // 🟢 Handle OK (save limit and show remaining)
+  // Handle OK (save limit and show remaining)
   const handleOK = async () => {
-  if (!amount || !startDate || !endDate) {
-    alert("Please fill all fields!");
-    return;
-  }
+    if (!amount || !startDate || !endDate) {
+      alert("Please fill all fields!");
+      return;
+    }
 
-  const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
 
-  if (!token || !userId) {
-    alert("Please login first!");
-    return;
-  }
+    if (!token || !userId) {
+      alert("Please login first!");
+      return;
+    }
 
-  try {
-    const totalSpent = await fetchExpensesInRange(
-      token,
-      formatDate(startDate),
-      formatDate(endDate)
-    );
+    try {
+      const totalSpent = await fetchExpensesInRange(
+        token,
+        formatDate(startDate),
+        formatDate(endDate)
+      );
 
-    const remaining = Number(amount) - totalSpent;
+      const remaining = Number(amount) - totalSpent;
 
-    await fetch("http://localhost:5000/api/limits", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        userId,
-        amount: Number(amount),
-        startDate,
-        endDate,
-        remaining,
-      }),
-    });
+      await fetch("http://localhost:5000/api/limits", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userId,
+          amount: Number(amount),
+          startDate,
+          endDate,
+          remaining,
+        }),
+      });
 
-    // ✅ Lưu vào localStorage để các tab khác dùng chung
-    localStorage.setItem("totalLimit", amount);
-    localStorage.setItem("remainingLimit", remaining);
-    localStorage.setItem("limitStart", startDate);
-    localStorage.setItem("limitEnd", endDate);
+      // Lưu vào localStorage để các tab khác dùng chung
+      localStorage.setItem("totalLimit", amount);
+      localStorage.setItem("remainingLimit", remaining);
+      localStorage.setItem("limitStart", startDate);
+      localStorage.setItem("limitEnd", endDate);
 
-    setRemainingLimit(remaining);
-    setLimitApplied(true);
-    alert("✅ Limit applied successfully!");
-  } catch (error) {
-    console.error("Error applying limit:", error);
-    alert("❌ Failed to apply limit!");
-  }
+      setRemainingLimit(remaining);
+      setLimitApplied(true);
+      alert("✅ Limit applied successfully!");
+    } catch (error) {
+      console.error("Error applying limit:", error);
+      alert("❌ Failed to apply limit!");
+    }
   };
 
-  // 🟠 Handle Cancel (reset form)
+  // Handle Cancel (reset form)
   const handleCancel = () => {
     setAmount("");
     setStartDate(new Date());
@@ -133,7 +133,6 @@ const ExpenseLimit = () => {
           </button>
         </div>
 
-        {/* --- Choose start date --- */}
         <div className="form-group">
           <label>Start Date</label>
           <div className="date-navigation">
@@ -158,7 +157,6 @@ const ExpenseLimit = () => {
           </div>
         </div>
 
-        {/* --- Choose end date --- */}
         <div className="form-group">
           <label>End Date</label>
           <div className="date-navigation">
@@ -183,7 +181,6 @@ const ExpenseLimit = () => {
           </div>
         </div>
 
-        {/* --- Limit amount --- */}
         <div className="form-group">
           <label>Limit amount (VND)</label>
           <input
@@ -194,7 +191,6 @@ const ExpenseLimit = () => {
           />
         </div>
 
-        {/* --- Buttons --- */}
         <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
           <button className="submit-btn" onClick={handleOK}>
             OK

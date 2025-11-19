@@ -19,35 +19,29 @@ import Report from "./components/Report";
 import "./App.css";
 
 function App() {
-  // Hàm kiểm tra xem người dùng đã đăng nhập chưa (ví dụ)
   const isAuthenticated = () => !!localStorage.getItem("token");
 
-  // Component bảo vệ route, chuyển hướng về login nếu chưa đăng nhập
   const ProtectedRoute = ({ children }) => {
     if (!isAuthenticated()) {
       return <Navigate to="/login" replace />;
     }
-    // Nếu đã đăng nhập, hiển thị component con với Sidebar
+
     return (
       <div style={{ display: "flex" }}>
         <Sidebar />
-        <div style={{ flex: 1, paddingTop: '60px' }}> {/* Thêm padding top nếu Header cố định */}
-          {children}
-        </div>
+        <div style={{ flex: 1, paddingTop: "60px" }}>{children}</div>
       </div>
     );
   };
 
   return (
     <Router>
-      {/* Header có thể hiển thị mọi lúc hoặc chỉ khi đã đăng nhập */}
       <Header />
 
       <Routes>
         {/* Route công khai */}
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/login" element={<LoginForm />} />
-
 
         <Route path="/" element={<Navigate to="/login" replace />} />
 
@@ -69,17 +63,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
-        {/* 💡 3. XÓA HOẶC VÔ HIỆU HÓA ROUTE /income */}
-        {/* Nếu bạn không muốn truy cập trực tiếp /income nữa */}
-        {/* <Route
-          path="/income"
-          element={
-            <ProtectedRoute>
-              <TransactionPage initialTab="income" /> // Hoặc vẫn dùng TransactionPage với tab mặc định là income
-            </ProtectedRoute>
-          }
-        /> */}
 
         <Route
           path="/expense-limit"
@@ -123,7 +106,6 @@ function App() {
         />
 
         <Route path="*" element={<Navigate to="/home" replace />} />
-
       </Routes>
     </Router>
   );

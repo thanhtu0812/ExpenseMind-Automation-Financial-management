@@ -5,14 +5,21 @@ const Transaction = require("../models/Transaction");
 const Category = require("../models/Category");
 const router = express.Router();
 
-// 📌 Lấy danh sách transaction
+//Lấy danh sách transaction
 router.get("/", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Token là bắt buộc!" });
 
     const decoded = jwt.verify(token, "secretkey");
-    const { page = 1, limit = 10, type, category, startDate, endDate } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      type,
+      category,
+      startDate,
+      endDate,
+    } = req.query;
 
     const filter = { user_id: new mongoose.Types.ObjectId(decoded.userId) };
 
@@ -46,7 +53,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 📌 Lấy 1 transaction theo ID
+//Lấy 1 transaction theo ID
 router.get("/:id", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -70,7 +77,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// 📌 Tạo transaction mới
+//Tạo transaction mới
 router.post("/", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -86,10 +93,11 @@ router.post("/", async (req, res) => {
     }
 
     if (!["expense", "income"].includes(type)) {
-      return res.status(400).json({ message: "Type phải là 'expense' hoặc 'income'!" });
+      return res
+        .status(400)
+        .json({ message: "Type phải là 'expense' hoặc 'income'!" });
     }
 
-    // ✅ Cho phép category mặc định hoặc category thuộc user
     const category = await Category.findOne({
       _id: category_id,
       $or: [
@@ -126,7 +134,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// 📌 Cập nhật transaction
+//Cập nhật transaction
 router.put("/:id", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -176,7 +184,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// 📌 Xóa transaction
+//Xóa transaction
 router.delete("/:id", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -201,7 +209,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// 📊 Thống kê tổng quan
+//Thống kê tổng quan
 router.get("/stats/overview", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -248,7 +256,7 @@ router.get("/stats/overview", async (req, res) => {
   }
 });
 
-// 📊 Thống kê theo category
+//Thống kê theo category
 router.get("/stats/by-category", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -285,7 +293,7 @@ router.get("/stats/by-category", async (req, res) => {
           count: 1,
           category: {
             name: { $ifNull: ["$category.name", "Không xác định"] },
-            icon: { $ifNull: ["$category.icon", "default-icon"] }
+            icon: { $ifNull: ["$category.icon", "default-icon"] },
           },
         },
       },
@@ -321,7 +329,7 @@ router.get("/stats/range", async (req, res) => {
       },
     };
 
-    // Gom nhóm theo loại (thu, chi) và category
+    //Group theo loại (thu, chi) và category
     const stats = await Transaction.aggregate([
       { $match: match },
       {
@@ -344,7 +352,7 @@ router.get("/stats/range", async (req, res) => {
           type: "$_id.type",
           category: {
             name: { $ifNull: ["$category.name", "Không xác định"] },
-            icon: { $ifNull: ["$category.icon", null] }
+            icon: { $ifNull: ["$category.icon", null] },
           },
           total: 1,
           _id: 0,
@@ -352,7 +360,6 @@ router.get("/stats/range", async (req, res) => {
       },
     ]);
 
-    // Tách dữ liệu ra 
     const expenses = stats.filter((s) => s.type === "expense");
     const incomes = stats.filter((s) => s.type === "income");
 

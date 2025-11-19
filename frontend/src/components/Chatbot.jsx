@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronLeft, Send, Paperclip } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // Thêm import này
+import { useNavigate } from "react-router-dom";
 import chatbotIcon from "./assets/images/chatbot.png";
 import bgImage from "./assets/images/anh-may-dep-cute.jpg";
 import "../styles/Chatbot.css";
@@ -10,7 +10,7 @@ export const Chatbot = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [conversationId, setConversationId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Thêm state kiểm tra đăng nhập
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [quickActions] = useState([
     "Chi tiêu tuần này thế nào?",
     "Gợi ý tiết kiệm",
@@ -19,21 +19,17 @@ export const Chatbot = () => {
   ]);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
-  const navigate = useNavigate(); // Thêm hook navigate
+  const navigate = useNavigate();
 
-  // Kiểm tra đăng nhập khi component mount
   useEffect(() => {
     const checkAuthentication = () => {
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("userId");
 
       if (!token || !userId) {
-        // Nếu chưa đăng nhập, chuyển hướng đến trang login
         navigate("/login");
         return;
       }
-
-      // Nếu đã đăng nhập, set state và khởi tạo conversation
       setIsAuthenticated(true);
     };
 
@@ -51,11 +47,11 @@ export const Chatbot = () => {
           .substr(2, 9)}`;
         setConversationId(newConvId);
 
-        // Tin nhắn chào mừng
+        // Welcome
         setMessages([
           {
             id: 1,
-            text: "Xin chào! Tôi là AI ExpenseMind - trợ lý quản lý chi tiêu của bạn. Tôi có thể giúp bạn phân tích chi tiêu, thêm giao dịch mới, tạo nhắc nhở và đưa ra gợi ý tiết kiệm!",
+            text: "Xin chào! Tôi là AI ExpenseMind - trợ lý quản lý chi tiêu của bạn. Tôi có thể giúp bạn phân tích chi tiêu, thêm giao dịch mới và đưa ra gợi ý tiết kiệm!",
             isBot: true,
             timestamp: new Date(),
           },
@@ -63,7 +59,7 @@ export const Chatbot = () => {
       }
     };
     initConversation();
-  }, [isAuthenticated]); // Thêm dependency isAuthenticated
+  }, [isAuthenticated]);
 
   // Scroll to bottom khi có tin nhắn mới
   useEffect(() => {
@@ -96,7 +92,7 @@ export const Chatbot = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Thêm token vào header
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           message: inputMessage,
@@ -124,9 +120,7 @@ export const Chatbot = () => {
         };
         setMessages((prev) => [...prev, botMessage]);
 
-        // Xử lý action nếu có
         if (data.action === "add_transaction") {
-          // Chuyển hướng đến trang thêm giao dịch
           console.log("Chuyển đến trang thêm giao dịch");
         }
       } else {
@@ -156,7 +150,6 @@ export const Chatbot = () => {
     }
 
     setInputMessage(action);
-    // Tự động gửi sau 100ms
     setTimeout(() => {
       handleSendMessage();
     }, 100);
@@ -170,7 +163,6 @@ export const Chatbot = () => {
   };
 
   const handleAttachmentClick = () => {
-    // Kiểm tra authentication trước khi đính kèm file
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
@@ -202,7 +194,6 @@ export const Chatbot = () => {
       await processReceiptImage(file);
       setIsLoading(false);
 
-      // Clear the file input
       e.target.value = "";
     }
   };
@@ -242,6 +233,10 @@ export const Chatbot = () => {
           timestamp: new Date(),
         };
         setMessages((prev) => [...prev, botMessage]);
+
+        window.dispatchEvent(new Event("transactionAdded"));
+        localStorage.setItem("transactionRefresh", Date.now().toString());
+        console.log("Transaction refresh trigger saved to localStorage");
       } else {
         throw new Error(data.error || "Failed to process image.");
       }
@@ -380,7 +375,7 @@ export const Chatbot = () => {
                   accept="image/*"
                   style={{ display: "none" }}
                   disabled={isLoading}
-                />{" "}
+                />
               </div>
             </div>
           </div>

@@ -6,31 +6,28 @@ const Category = require("../models/Category");
 const router = express.Router();
 const nodemailer = require("nodemailer");
 
-
 const verificationCodes = {};
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.SYSTEM_EMAIL, // email gửi
-    pass: process.env.SYSTEM_EMAIL_PASSWORD, // password app Gmail
+    user: process.env.SYSTEM_EMAIL,
+    pass: process.env.SYSTEM_EMAIL_PASSWORD,
   },
 });
 
-// Gửi mã xác thực
 router.post("/send-verification", async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required!" });
 
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "Email already registered!" });
+    if (existingUser)
+      return res.status(400).json({ message: "Email already registered!" });
 
-    // Tạo mã 6 chữ số
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     verificationCodes[email] = code;
 
-    // Gửi email
     await transporter.sendMail({
       from: process.env.SYSTEM_EMAIL,
       to: email,
@@ -55,7 +52,6 @@ router.post("/register", async (req, res) => {
         .status(400)
         .json({ message: "Email or username already exists!" });
     }
-
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -104,9 +100,7 @@ router.post("/register", async (req, res) => {
       }))
     );
 
-
-      delete verificationCodes[email];
-
+    delete verificationCodes[email];
 
     res.status(201).json({
       message: "Registration successful!",
@@ -130,14 +124,16 @@ router.post("/login", async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res.status(400).json({ message: "Please enter username and password!" });
+      return res
+        .status(400)
+        .json({ message: "Please enter username and password!" });
     }
 
     const user = await User.findOne({
       $or: [
         { username: new RegExp(`^${username}$`, "i") },
-        { email: new RegExp(`^${username}$`, "i") }
-      ]
+        { email: new RegExp(`^${username}$`, "i") },
+      ],
     });
 
     if (!user) {
@@ -159,7 +155,7 @@ router.post("/login", async (req, res) => {
       userId: user._id.toString(),
       username: user.username,
       email: user.email,
-      role: user.role
+      role: user.role,
     });
   } catch (error) {
     console.error("Login error:", error);

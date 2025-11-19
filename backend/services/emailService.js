@@ -2,7 +2,6 @@ const transporter = require("./emailConfig");
 const User = require("../models/User");
 
 class EmailService {
-  // Gửi email nhắc nhở từ hệ thống đến user
   async sendReminderEmail(userId, reminder) {
     try {
       const user = await User.findById(userId);
@@ -18,7 +17,7 @@ class EmailService {
       const mailOptions = {
         from: `"Expense Mind" <${process.env.SYSTEM_EMAIL}>`,
         to: user.email,
-        replyTo: "no-reply@moneymanagement.com", // Email no-reply
+        replyTo: "no-reply@moneymanagement.com",
         subject: `🔔 Reminder: ${reminder.title}`,
         html: this.generateReminderTemplate(
           user,

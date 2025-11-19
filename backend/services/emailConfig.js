@@ -1,6 +1,5 @@
 const nodemailer = require("nodemailer");
 
-// Cấu hình EMAIL HỆ THỐNG duy nhất
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {

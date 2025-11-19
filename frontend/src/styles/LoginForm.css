@@ -10,14 +10,12 @@
   background-position: center;
 }
 
-/* Tiêu đề */
 .welcome-text {
   font-size: 2.5em;
   margin-bottom: 20px;
   color: #000;
 }
 
-/* Form */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -26,7 +24,6 @@
   max-width: 500px;
 }
 
-/* Input + icon */
 .input-group {
   margin-bottom: 35px;
   position: relative;
@@ -41,7 +38,7 @@
   border: 1px solid #d9d9d9;
   background-color: transparent;
   border-radius: 999px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   outline: none;
 }
 
@@ -60,7 +57,6 @@
   color: #000;
 }
 
-/* Nút Login */
 .login-btn {
   width: 100%;
   max-width: 350px;
@@ -71,15 +67,14 @@
   border-radius: 999px;
   font-size: 1em;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(255,75,92,0.4);
+  box-shadow: 0 4px 10px rgba(255, 75, 92, 0.4);
   transition: all 0.3s ease;
 }
 
 .login-btn:hover {
-  box-shadow: 0 8px 16px rgba(255,75,92,0.5);
+  box-shadow: 0 8px 16px rgba(255, 75, 92, 0.5);
 }
 
-/* Đường kẻ */
 .divider {
   width: 80%;
   max-width: 500px;
@@ -88,7 +83,6 @@
   opacity: 0.6;
 }
 
-/* Sign up text */
 .signup-prompt {
   margin-top: 20px;
   display: flex;
@@ -103,7 +97,6 @@
   text-decoration: none;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .welcome-text {
     font-size: 2em;

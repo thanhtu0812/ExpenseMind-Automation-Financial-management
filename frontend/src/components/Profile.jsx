@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Profile.css";
@@ -15,12 +14,9 @@ const Profile = () => {
   const [isPreviewing, setIsPreviewing] = useState(false);
   const fileInputRef = useRef(null);
 
-
-  // Hàm định dạng tiền
   const formatCurrency = (amount) =>
     new Intl.NumberFormat("vi-VN").format(amount) + " VND";
 
-  // Hàm định dạng ngày
   const formatDate = (dateString) => {
     if (!dateString) return "";
     return new Date(dateString).toISOString().split("T")[0];
@@ -42,21 +38,15 @@ const Profile = () => {
       }
 
       try {
-
         const res = await axios.get(
           `http://localhost:5000/api/users/${userId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-
-        const serverUser = res.data.user || res.data
+        const serverUser = res.data.user || res.data;
         setUser(serverUser);
         localStorage.setItem("user", JSON.stringify(serverUser));
 
-
-
-
-        // Lấy dữ liệu thống kê từ API 
         try {
           const statsRes = await axios.get(
             "http://localhost:5000/api/transactions/stats/overview",
@@ -69,9 +59,6 @@ const Profile = () => {
           console.error("Failed to load stats:", statsError);
           setStats({ income: 0, expense: 0, balance: 0 });
         }
-
-
-
       } catch (error) {
         console.error("Load user error:", error);
         if (error.response?.status === 401) {
@@ -90,7 +77,6 @@ const Profile = () => {
     loadUserFromServer();
   }, [navigate]);
 
-  // Chọn ảnh
   const handleAvatarSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -100,7 +86,6 @@ const Profile = () => {
     setUser({ ...user, pendingAvatarFile: file });
   };
 
-  //  Xác nhận ảnh
   const handleAvatarConfirm = async () => {
     const file = user.pendingAvatarFile;
     if (!file) return;
@@ -124,8 +109,11 @@ const Profile = () => {
 
       const updatedAvatar = res.data.avatar;
       setUser({ ...user, avatar: updatedAvatar });
-      localStorage.setItem("user", JSON.stringify({ ...user, avatar: updatedAvatar }));
-      window.dispatchEvent(new Event('avatarUpdated'));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...user, avatar: updatedAvatar })
+      );
+      window.dispatchEvent(new Event("avatarUpdated"));
       alert("Avatar updated successfully!");
     } catch (error) {
       console.error("Error uploading avatar:", error);
@@ -136,7 +124,6 @@ const Profile = () => {
     }
   };
 
-  // Hủy ảnh
   const handleAvatarCancel = () => {
     setPreviewAvatar(null);
     setIsPreviewing(false);
@@ -172,9 +159,9 @@ const Profile = () => {
         payload,
         {
           headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
       );
 
@@ -193,30 +180,32 @@ const Profile = () => {
       alert("User information updated successfully!");
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Failed to update user information!");
+      alert(
+        error.response?.data?.message || "Failed to update user information!"
+      );
     }
   };
 
-
   return (
-    <div className="profile-container" style={{ backgroundImage: `url(${bgImage})` }}>
+    <div
+      className="profile-container"
+      style={{ backgroundImage: `url(${bgImage})` }}
+    >
       <div className="profile-content">
         <div className="profile-card">
-
-          {/* Avatar */}
           <div className="profile-avatar-section">
             <div className="profile-avatar-wrapper">
               <img
                 src={
                   previewAvatar
                     ? previewAvatar
-                    : user?.avatar || "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                    : user?.avatar ||
+                      "https://cdn-icons-png.flaticon.com/512/847/847969.png"
                 }
                 alt="Avatar"
                 className="profile-avatar"
               />
 
-              {/* Chọn ảnh */}
               <input
                 type="file"
                 accept="image/*"
@@ -244,41 +233,50 @@ const Profile = () => {
                 </button>
               ) : (
                 <div className="avatar-preview-actions">
-
-                  <button className="cancel-btn" onClick={handleAvatarCancel}>❌</button>
-                  <button className="confirm-btn" onClick={handleAvatarConfirm}>✅</button>
+                  <button className="cancel-btn" onClick={handleAvatarCancel}>
+                    ❌
+                  </button>
+                  <button className="confirm-btn" onClick={handleAvatarConfirm}>
+                    ✅
+                  </button>
                 </div>
               )}
-
-
             </div>
           </div>
-          {/* Stats */}
           <div className="profile-stats">
             <div className="profile-stat-item">
               <span className="profile-stat-label">Income</span>
-              <span className="profile-stat-value income">+{formatCurrency(stats.income)}</span>
+              <span className="profile-stat-value income">
+                +{formatCurrency(stats.income)}
+              </span>
             </div>
             <div className="profile-stat-item">
               <span className="profile-stat-label">Expense</span>
-              <span className="profile-stat-value expense">-{formatCurrency(stats.expense)}</span>
+              <span className="profile-stat-value expense">
+                -{formatCurrency(stats.expense)}
+              </span>
             </div>
             <div className="profile-stat-item">
               <span className="profile-stat-label">Balance</span>
               <span
                 className="profile-stat-value balance"
-                style={{ color: stats.balance < 0 ? "red" : "#7A5AF8", fontWeight: "600" }}
+                style={{
+                  color: stats.balance < 0 ? "red" : "#7A5AF8",
+                  fontWeight: "600",
+                }}
               >
                 {formatCurrency(stats.balance)}
               </span>
             </div>
           </div>
 
-          {/* User Info */}
           <div className="profile-form">
             <div className="profile-header">
               <h3>Your Information</h3>
-              <button className="edit-btn" onClick={() => setIsEditing(!isEditing)}>
+              <button
+                className="edit-btn"
+                onClick={() => setIsEditing(!isEditing)}
+              >
                 <FaEdit />
               </button>
             </div>
@@ -315,7 +313,6 @@ const Profile = () => {
                 onChange={(e) => setUser({ ...user, dob: e.target.value })}
               />
             </div>
-
 
             {isEditing && (
               <button className="save-btn" onClick={handleSave}>

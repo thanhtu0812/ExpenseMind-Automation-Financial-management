@@ -16,7 +16,7 @@ const Income = () => {
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-  // 🔹 Lấy danh sách category (chỉ type = income)
+  //Lấy danh sách category (chỉ type = income)
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -38,7 +38,7 @@ const Income = () => {
     fetchCategories();
   }, [API_URL, navigate]);
 
-  // 🔹 Định dạng ngày
+  // Định dạng ngày
   const formatDate = (date) => date.toISOString().split("T")[0];
 
   const handlePrevDate = () => {
@@ -53,7 +53,7 @@ const Income = () => {
     setDate(newDate);
   };
 
-  // 🔹 Thêm category mới (type = income)
+  // Thêm category mới (type = income)
   const handleAddCategory = async (categoryData) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -76,7 +76,7 @@ const Income = () => {
     }
   };
 
-  // 🔹 Thêm income mới
+  // Thêm income mới
   const handleSubmit = async () => {
     if (!amount || !selectedCategory) {
       alert("Please fill in all required fields!");
@@ -114,7 +114,6 @@ const Income = () => {
 
   return (
     <>
-      {/* 📅 Ngày */}
       <div className="form-group">
         <label>Day</label>
         <div className="date-navigation">
@@ -133,7 +132,6 @@ const Income = () => {
         </div>
       </div>
 
-      {/* 📝 Ghi chú */}
       <div className="form-group">
         <label>Note</label>
         <input
@@ -144,7 +142,6 @@ const Income = () => {
         />
       </div>
 
-      {/* 💵 Số tiền */}
       <div className="form-group">
         <label>Amount</label>
         <input
@@ -155,7 +152,6 @@ const Income = () => {
         />
       </div>
 
-      {/* 🗂️ Danh mục */}
       <p className="category-title">Categories</p>
       <div className="category-grid">
         {categories.map((cat) => (
@@ -175,7 +171,6 @@ const Income = () => {
           </div>
         ))}
 
-        {/* ➕ Thêm category */}
         <div
           className="category-card add-card"
           onClick={() => setShowAddModal(true)}

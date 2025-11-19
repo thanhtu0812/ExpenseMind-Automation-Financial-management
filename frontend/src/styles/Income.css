@@ -16,7 +16,6 @@
   text-align: center;
 }
 
-/* 🔸 Tổng quan limit */
 .limit-summary {
   width: 90%;
   max-width: 850px;
@@ -67,7 +66,6 @@ footer {
   text-align: center;
 }
 
-/* 🔹 Khối chính của form */
 .income-form {
   width: 90%;
   max-width: 850px;
@@ -80,7 +78,6 @@ footer {
   align-items: flex-start;
 }
 
-/* 🟢 Tabs điều hướng */
 .tabs {
   display: flex;
   justify-content: flex-start;
@@ -107,7 +104,6 @@ footer {
   color: #fff;
 }
 
-/* 📅 Form chung */
 .form-group {
   display: flex;
   flex-wrap: wrap;
@@ -141,7 +137,6 @@ footer {
   box-shadow: 0 0 4px rgba(255, 182, 185, 0.4);
 }
 
-/* 📆 Điều hướng ngày */
 .date-navigation {
   display: flex;
   align-items: center;
@@ -179,7 +174,6 @@ footer {
   color: #ff6b70;
 }
 
-/* 💰 Daily Earned */
 .daily-earned {
   flex: 1;
   padding: 11px 14px;
@@ -191,11 +185,10 @@ footer {
   font-size: 15px;
 }
 
-/* 💵 Các nút và danh mục */
 .category-title {
-  font-weight: 700;              
-  color: #ff6b70;           
-  font-size: 17px;              
+  font-weight: 700;
+  color: #ff6b70;
+  font-size: 17px;
   margin-top: 25px;
   margin-bottom: 10px;
   text-align: left;
@@ -269,7 +262,6 @@ footer {
   color: #fff;
 }
 
-/* 🧾 Nút submit */
 .submit-btn {
   margin-top: 30px;
   background-color: #ffb6b9;
@@ -286,7 +278,6 @@ footer {
   background-color: #ff9ca0;
 }
 
-/* 🪶 Responsive */
 @media (max-width: 900px) {
   .category-grid {
     grid-template-columns: repeat(3, 1fr);

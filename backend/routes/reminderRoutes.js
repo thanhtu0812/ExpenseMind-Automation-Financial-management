@@ -3,7 +3,7 @@ const Reminder = require("../models/Reminder");
 const reminderService = require("../services/reminderService");
 const router = express.Router();
 
-// 📌 GET: Lấy tất cả reminders của user
+//Lấy tất cả reminders của user
 router.get("/", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 📌 GET: Lấy reminder theo ID
+//Lấy reminder theo ID
 router.get("/:id", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -58,7 +58,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// 📌 POST: Tạo reminder mới
+//Tạo reminder mới
 router.post("/", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -87,7 +87,6 @@ router.post("/", async (req, res) => {
 
     await newReminder.save();
 
-    // LÊN LỊCH GỬI EMAIL - THÊM ĐOẠN NÀY
     const populatedReminder = await Reminder.findById(newReminder._id).populate(
       "user_id"
     );
@@ -106,7 +105,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// 📌 PUT: Cập nhật reminder
+//Cập nhật reminder
 router.put("/:id", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -135,7 +134,6 @@ router.put("/:id", async (req, res) => {
 
     await reminder.save();
 
-    // CẬP NHẬT LỊCH GỬI EMAIL - THÊM ĐOẠN NÀY
     const populatedReminder = await Reminder.findById(reminder._id).populate(
       "user_id"
     );
@@ -154,7 +152,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// 📌 DELETE: Xóa reminder
+//Xóa reminder
 router.delete("/:id", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -174,7 +172,6 @@ router.delete("/:id", async (req, res) => {
       return res.status(404).json({ message: "Reminder không tồn tại!" });
     }
 
-    // HỦY LỊCH GỬI EMAIL - THÊM ĐOẠN NÀY
     reminderService.cancelReminder(req.params.id);
 
     res.json({ message: "Xóa reminder thành công!" });

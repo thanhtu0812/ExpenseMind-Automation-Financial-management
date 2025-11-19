@@ -38,7 +38,6 @@ const transactionSchema = new mongoose.Schema(
   }
 );
 
-// Tạo index để tối ưu truy vấn
 transactionSchema.index({ user_id: 1, date: -1 });
 transactionSchema.index({ user_id: 1, category_id: 1 });
 

@@ -1,4 +1,3 @@
-/* Profile Container */
 .profile-container {
   min-height: 100vh;
   background-size: cover;
@@ -18,7 +17,6 @@
   color: #666;
 }
 
-/* Profile Content */
 .profile-content {
   flex: 1;
   display: flex;
@@ -27,7 +25,6 @@
   padding: 40px 20px;
 }
 
-/* Profile Card */
 .profile-card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 24px;
@@ -38,7 +35,6 @@
   backdrop-filter: blur(10px);
 }
 
-/* Avatar Section */
 .profile-avatar-section {
   display: flex;
   justify-content: center;
@@ -87,9 +83,9 @@
 }
 
 .confirm-btn {
-  background-color: #ffffff; 
-  
-   border-radius: 50%;
+  background-color: #ffffff;
+
+  border-radius: 50%;
   border: none;
   display: flex;
   align-items: center;
@@ -101,7 +97,7 @@
 
 .cancel-btn {
   background-color: #ffffff;
-  
+
   width: 47px;
   height: 47px;
   border-radius: 50%;
@@ -112,13 +108,13 @@
   padding: 0;
   cursor: pointer;
   margin-top: -15px;
-   outline: none;
-  -webkit-tap-highlight-color: transparent; 
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .cancel-btn:active {
   outline: none;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  background-color: #ffffff; 
+  background-color: #ffffff;
 }
 .confirm-btn:hover,
 .cancel-btn:hover {
@@ -129,12 +125,12 @@
 .cancel-btn:active {
   transform: scale(0.95);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  background-color: #ffffff; 
+  background-color: #ffffff;
 }
 .confirm-btn:focus,
 .cancel-btn:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(255, 75, 110, 0.3); 
+  box-shadow: 0 0 0 3px rgba(255, 75, 110, 0.3);
 }
 
 .profile-camera-btn {
@@ -161,7 +157,6 @@
 .profile-camera-btn svg {
   color: #666;
 }
-
 
 /* Stats Section */
 .profile-stats {
@@ -212,7 +207,6 @@
 .profile-form-group.small {
   flex: 1;
 }
-
 
 .profile-form-group {
   display: flex;
@@ -280,7 +274,7 @@
 }
 
 .arrow {
-  margin-left: -6px; 
+  margin-left: -6px;
   font-size: 12px;
   color: #555;
   transition: transform 0.2s ease;
@@ -289,8 +283,6 @@
 .dropdown-display:hover .arrow {
   transform: translateX(-2px);
 }
-
-
 
 .profile-input:focus {
   outline: none;

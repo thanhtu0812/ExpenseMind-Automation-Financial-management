@@ -26,9 +26,7 @@ class ReminderService {
       for (const reminder of reminders) {
         this.scheduleReminder(reminder);
       }
-    } catch (error) {
-      // Ẩn log lỗi
-    }
+    } catch (error) {}
   }
 
   scheduleReminder(reminder) {
@@ -55,9 +53,7 @@ class ReminderService {
           reminder
         );
         await this.handleRepeatReminder(reminder);
-      } catch (error) {
-        // Ẩn log lỗi
-      }
+      } catch (error) {}
     }, delay);
 
     this.scheduledJobs.set(jobId, { stop: () => clearTimeout(timeoutId) });
@@ -80,9 +76,7 @@ class ReminderService {
       const savedReminder = await newReminder.save();
       await savedReminder.populate("user_id");
       this.scheduleReminder(savedReminder);
-    } catch (error) {
-      // Ẩn log lỗi
-    }
+    } catch (error) {}
   }
 
   calculateNextDate(reminder) {
@@ -136,9 +130,7 @@ class ReminderService {
           }
         }
       }
-    } catch (error) {
-      // Ẩn log lỗi
-    }
+    } catch (error) {}
   }
 
   cancelReminder(reminderId) {

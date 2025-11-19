@@ -46,7 +46,7 @@ router.post("/message", async (req, res) => {
 
     conversation.messages.push({
       role: "user",
-      content: message.substring(0, 1000), // Giới hạn độ dài
+      content: message.substring(0, 1000),
       timestamp: new Date(),
     });
 
@@ -199,7 +199,6 @@ router.post("/message", async (req, res) => {
     const response = await result.response;
     const text = response.text();
 
-    // Kiểm tra response có tồn tại không
     if (!text) {
       throw new Error("AI response is empty");
     }
@@ -210,7 +209,6 @@ router.post("/message", async (req, res) => {
       responseObject = JSON.parse(jsonMatch ? jsonMatch[1] : text);
     } catch (parseError) {
       console.error("JSON parse error:", parseError);
-      // Nếu không parse được JSON, xem như là chat thông thường
       responseObject = { action: "chat" };
     }
 
@@ -219,7 +217,6 @@ router.post("/message", async (req, res) => {
     if (responseObject.action === "create_transaction") {
       const { type, amount, category, description, date } = responseObject.data;
 
-      // Validate transaction data
       if (!type || !amount || !category) {
         responseText =
           "Thiếu thông tin cần thiết để tạo giao dịch. Vui lòng cung cấp đầy đủ loại, số tiền và danh mục.";
@@ -323,7 +320,6 @@ router.post("/message", async (req, res) => {
           "Xin lỗi, tôi gặp sự cố khi truy vấn dữ liệu tài chính của bạn.";
       }
     } else {
-      // Chat thông thường
       try {
         const chat = model.startChat({
           history: conversation.messages.map((msg) => ({
@@ -345,25 +341,21 @@ router.post("/message", async (req, res) => {
       }
     }
 
-    // Đảm bảo responseText không bao giờ undefined hoặc rỗng
     if (!responseText || responseText.trim() === "") {
       responseText =
         "Xin lỗi, tôi không thể tạo phản hồi phù hợp ngay lúc này.";
     }
 
-    // Thêm message bot vào conversation với validation
     conversation.messages.push({
       role: "model",
-      content: responseText.substring(0, 2000), // Giới hạn độ dài
+      content: responseText.substring(0, 3000), // Giới hạn độ dài
       timestamp: new Date(),
     });
 
-    // Validate conversation trước khi save
     try {
       await conversation.save();
     } catch (saveError) {
       console.error("Save conversation error:", saveError);
-      // Vẫn trả về response cho user dù có lỗi save
     }
 
     res.json({
@@ -501,7 +493,6 @@ router.post("/upload", upload.single("image"), async (req, res) => {
     if (responseObject.action === "create_transaction") {
       const { type, amount, category, description, date } = responseObject.data;
 
-      // Validate transaction data
       if (!type || !amount || !category) {
         responseText =
           "Không thể trích xuất đủ thông tin từ hình ảnh. Vui lòng thử với hình ảnh rõ hơn hoặc nhập thủ công.";
@@ -532,12 +523,10 @@ router.post("/upload", upload.single("image"), async (req, res) => {
         "Tôi không nhận diện được đây là hóa đơn hay biên lai. Vui lòng thử với hình ảnh khác.";
     }
 
-    // Đảm bảo responseText không bao giờ undefined hoặc rỗng
     if (!responseText || responseText.trim() === "") {
       responseText = "Xin lỗi, tôi không thể xử lý hình ảnh này.";
     }
 
-    // Thêm messages vào conversation với validation
     conversation.messages.push({
       role: "user",
       content: `[Đã tải lên hình ảnh: ${imageFile.originalname}]`,
@@ -550,12 +539,10 @@ router.post("/upload", upload.single("image"), async (req, res) => {
       timestamp: new Date(),
     });
 
-    // Validate conversation trước khi save
     try {
       await conversation.save();
     } catch (saveError) {
       console.error("Save conversation error:", saveError);
-      // Vẫn trả về response cho user dù có lỗi save
     }
 
     res.json({

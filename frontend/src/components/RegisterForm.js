@@ -3,13 +3,11 @@ import { useNavigate } from "react-router-dom";
 import "../styles/RegisterForm.css";
 import bgImage from "./assets/images/anh-may-dep-cute.jpg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import SuccessModal from "./SuccessModal";
 
 const RegisterForm = () => {
-  const [step, setStep] = useState(1); 
+  const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [gender, setGender] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
@@ -18,7 +16,6 @@ const RegisterForm = () => {
   const [showVerifyPassword, setShowVerifyPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const navigate = useNavigate();
 
   //Gửi mã xác thực
@@ -27,7 +24,13 @@ const RegisterForm = () => {
     setError("");
 
     // Validation cơ bản
-    if (!name.trim() || !email.trim() || !password.trim() || !verifyPassword.trim() || !gender || !dateOfBirth) {
+    if (
+      !name.trim() ||
+      !email.trim() ||
+      !password.trim() ||
+      !verifyPassword.trim() ||
+      !dateOfBirth
+    ) {
       setError("Please fill in all fields!");
       return;
     }
@@ -51,16 +54,20 @@ const RegisterForm = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/send-verification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/auth/send-verification",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Failed to send verification code.");
+      if (!response.ok)
+        throw new Error(data.message || "Failed to send verification code.");
 
-      setStep(2); 
+      setStep(2);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -74,7 +81,7 @@ const RegisterForm = () => {
     setError("");
 
     if (!verificationCode.trim()) {
-      setError("Please enter verification code.");
+      setError("Please enter verification code sent to your email.");
       return;
     }
 
@@ -88,7 +95,6 @@ const RegisterForm = () => {
           email,
           password,
           dob: dateOfBirth,
-          gender,
           verificationCode,
         }),
       });
@@ -98,7 +104,6 @@ const RegisterForm = () => {
 
       localStorage.setItem("token", data.token || "dummy-token");
       navigate("/home");
-      
     } catch (err) {
       setError(err.message);
     } finally {
@@ -115,15 +120,17 @@ const RegisterForm = () => {
         <h1 className="welcome-text">Welcome to ExpenseMind</h1>
 
         {error && (
-          <div style={{ 
-            color: "red", 
-            backgroundColor: "#ffe6e6",
-            padding: "10px",
-            borderRadius: "5px",
-            marginBottom: "15px", 
-            textAlign: "center",
-            fontSize: "14px"
-          }}>
+          <div
+            style={{
+              color: "red",
+              backgroundColor: "#ffe6e6",
+              padding: "10px",
+              borderRadius: "5px",
+              marginBottom: "15px",
+              textAlign: "center",
+              fontSize: "14px",
+            }}
+          >
             {error}
           </div>
         )}
@@ -149,27 +156,6 @@ const RegisterForm = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-            </div>
-
-            <div className="input-group gender-group">
-              <label>
-                <input
-                  type="radio"
-                  value="male"
-                  checked={gender === "male"}
-                  onChange={(e) => setGender(e.target.value)}
-                />{" "}
-                Male
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  value="female"
-                  checked={gender === "female"}
-                  onChange={(e) => setGender(e.target.value)}
-                />{" "}
-                Female
-              </label>
             </div>
 
             <div className="register-input-group">
@@ -214,11 +200,14 @@ const RegisterForm = () => {
               </span>
             </div>
 
-            <button 
+            <button
               type="submit"
               className="signup-btn"
               disabled={loading}
-              style={{ opacity: loading ? 0.6 : 1, cursor: loading ? "not-allowed" : "pointer" }}
+              style={{
+                opacity: loading ? 0.6 : 1,
+                cursor: loading ? "not-allowed" : "pointer",
+              }}
             >
               {loading ? "Sending code..." : "Register Now"}
             </button>
@@ -238,11 +227,14 @@ const RegisterForm = () => {
               />
             </div>
 
-            <button 
+            <button
               type="submit"
               className="signup-btn"
               disabled={loading}
-              style={{ opacity: loading ? 0.6 : 1, cursor: loading ? "not-allowed" : "pointer" }}
+              style={{
+                opacity: loading ? 0.6 : 1,
+                cursor: loading ? "not-allowed" : "pointer",
+              }}
             >
               {loading ? "Registering..." : "Register"}
             </button>
@@ -252,12 +244,11 @@ const RegisterForm = () => {
         <p className="login-prompt">
           Already have an account?
           <a href="/login" className="login-link">
-            {" "}Log in
+            {" "}
+            Log in
           </a>
         </p>
       </div>
-
-     
     </div>
   );
 };

@@ -218,7 +218,6 @@ footer {
   color: #fff;
 }
 
-
 @media (max-width: 900px) {
   .category-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -297,7 +296,6 @@ footer {
   }
 }
 
-/* 💖 Cancel button (white background, pink border/text, same animation as OK) */
 .cancel-btn {
   margin-top: 30px;
   background-color: #fff;
@@ -325,7 +323,6 @@ footer {
   box-shadow: 0 2px 6px rgba(255, 156, 160, 0.25);
 }
 
-/* === OK button (same size and animation as Cancel) === */
 .submit-btn {
   margin-top: 30px;
   background-color: #ffb6b9;
@@ -352,7 +349,6 @@ footer {
   box-shadow: 0 2px 6px rgba(255, 156, 160, 0.25);
 }
 
-/* Keep buttons aligned horizontally and centered */
 .button-group,
 .button-wrapper {
   display: flex;
@@ -371,5 +367,3 @@ footer {
   margin-top: 30px;
   width: 100%;
 }
-
-
