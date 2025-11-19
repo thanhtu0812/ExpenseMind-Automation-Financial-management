@@ -16,7 +16,7 @@ import "../styles/Calendar.css";
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date().getDate());
-  const [activeTab, setActiveTab] = useState("reminders");
+  const [activeTab, setActiveTab] = useState("transactions");
   const [reminders, setReminders] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -44,7 +44,10 @@ const Calendar = () => {
   // Helper function to get local date string in YYYY-MM-DD format
   const getLocalDateString = (date) => {
     const d = new Date(date);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(d.getDate()).padStart(2, "0")}`;
   };
 
   // Thêm useEffect để cảnh báo khi rời trang
@@ -211,12 +214,16 @@ const Calendar = () => {
         isToday,
         hasReminder: reminders.some((r) => {
           const reminderDateStr = getLocalDateString(r.date);
-          const currentDateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+          const currentDateStr = `${currentDate.getFullYear()}-${String(
+            currentDate.getMonth() + 1
+          ).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
           return reminderDateStr === currentDateStr;
         }),
         hasTransaction: transactions.some((t) => {
           const transactionDateStr = getLocalDateString(t.date);
-          const currentDateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+          const currentDateStr = `${currentDate.getFullYear()}-${String(
+            currentDate.getMonth() + 1
+          ).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
           return transactionDateStr === currentDateStr;
         }),
       });
@@ -382,7 +389,8 @@ const Calendar = () => {
     } catch (error) {
       console.error("Error adding reminder:", error);
       alert(
-        `Tạo reminder thất bại: ${error.response?.data?.message || "Lỗi không xác định"
+        `Tạo reminder thất bại: ${
+          error.response?.data?.message || "Lỗi không xác định"
         }`
       );
     }
@@ -463,7 +471,8 @@ const Calendar = () => {
     } catch (error) {
       console.error("Error updating reminder:", error);
       alert(
-        `Cập nhật reminder thất bại: ${error.response?.data?.message || "Lỗi không xác định"
+        `Cập nhật reminder thất bại: ${
+          error.response?.data?.message || "Lỗi không xác định"
         }`
       );
     }
@@ -482,7 +491,8 @@ const Calendar = () => {
       } catch (error) {
         console.error("Error deleting reminder:", error);
         alert(
-          `Xóa reminder thất bại: ${error.response?.data?.message || "Lỗi không xác định"
+          `Xóa reminder thất bại: ${
+            error.response?.data?.message || "Lỗi không xác định"
           }`
         );
       }
@@ -542,7 +552,8 @@ const Calendar = () => {
     } catch (error) {
       console.error("Error updating transaction:", error);
       alert(
-        `Cập nhật transaction thất bại: ${error.response?.data?.message || "Lỗi không xác định"
+        `Cập nhật transaction thất bại: ${
+          error.response?.data?.message || "Lỗi không xác định"
         }`
       );
     }
@@ -561,7 +572,8 @@ const Calendar = () => {
       } catch (error) {
         console.error("Error deleting transaction:", error);
         alert(
-          `Xóa transaction thất bại: ${error.response?.data?.message || "Lỗi không xác định"
+          `Xóa transaction thất bại: ${
+            error.response?.data?.message || "Lỗi không xác định"
           }`
         );
       }
@@ -580,13 +592,17 @@ const Calendar = () => {
 
   const selectedDateReminders = reminders.filter((r) => {
     const reminderDateStr = getLocalDateString(r.date);
-    const selectedDateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate).padStart(2, '0')}`;
+    const selectedDateStr = `${currentDate.getFullYear()}-${String(
+      currentDate.getMonth() + 1
+    ).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
     return reminderDateStr === selectedDateStr;
   });
 
   const selectedDateTransactions = transactions.filter((t) => {
     const transactionDateStr = getLocalDateString(t.date);
-    const selectedDateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate).padStart(2, '0')}`;
+    const selectedDateStr = `${currentDate.getFullYear()}-${String(
+      currentDate.getMonth() + 1
+    ).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
     return transactionDateStr === selectedDateStr;
   });
 
@@ -636,8 +652,6 @@ const Calendar = () => {
     setHasUnsavedChanges(false);
   };
 
-
-
   return (
     <div className="calendar" style={{ backgroundImage: `url(${bgImage})` }}>
       <h2 className="welcome-text">
@@ -674,12 +688,15 @@ const Calendar = () => {
             {calendarDays.map((dayObj, index) => (
               <div
                 key={index}
-                className={`calendar-day ${!dayObj.isCurrentMonth ? "other-month" : ""
-                  } ${dayObj.day === selectedDate && dayObj.isCurrentMonth
+                className={`calendar-day ${
+                  !dayObj.isCurrentMonth ? "other-month" : ""
+                } ${
+                  dayObj.day === selectedDate && dayObj.isCurrentMonth
                     ? "selected"
                     : ""
-                  } ${dayObj.isToday ? "today" : ""} ${dayObj.hasReminder ? "has-reminder" : ""
-                  } ${dayObj.hasTransaction ? "has-transaction" : ""}`}
+                } ${dayObj.isToday ? "today" : ""} ${
+                  dayObj.hasReminder ? "has-reminder" : ""
+                } ${dayObj.hasTransaction ? "has-transaction" : ""}`}
                 onClick={() =>
                   handleDayClick(dayObj.day, dayObj.isCurrentMonth)
                 }
@@ -701,15 +718,17 @@ const Calendar = () => {
 
           <div className="tabs-container">
             <button
-              className={`tab-button ${activeTab === "transactions" ? "active" : ""
-                }`}
+              className={`tab-button ${
+                activeTab === "transactions" ? "active" : ""
+              }`}
               onClick={() => handleTabChange("transactions")}
             >
               Transactions
             </button>
             <button
-              className={`tab-button ${activeTab === "reminders" ? "active" : ""
-                }`}
+              className={`tab-button ${
+                activeTab === "reminders" ? "active" : ""
+              }`}
               onClick={() => handleTabChange("reminders")}
             >
               Reminders
@@ -858,10 +877,11 @@ const Calendar = () => {
                         </div>
                         <div className="transaction-actions">
                           <span
-                            className={`transaction-amount ${transaction.type === "income"
-                              ? "income"
-                              : "expense"
-                              }`}
+                            className={`transaction-amount ${
+                              transaction.type === "income"
+                                ? "income"
+                                : "expense"
+                            }`}
                           >
                             {transaction.type === "income" ? "+" : "-"}
                             {transaction.amount.toLocaleString()} VND

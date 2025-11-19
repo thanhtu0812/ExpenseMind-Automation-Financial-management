@@ -5,8 +5,8 @@ const financialService = require("../services/financialService");
 const mongoose = require("mongoose");
 const Category = require("../models/Category");
 const ReportSchedule = require("../models/ReportSchedule");
-const multer = require('multer');
-const fs = require('fs');
+const multer = require("multer");
+const fs = require("fs");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -42,8 +42,19 @@ router.post("/message", async (req, res) => {
       timestamp: new Date(),
     });
 
-    const categories = await Category.find({ $or: [{ user_id: new mongoose.Types.ObjectId(userId) }, { is_default: true }] });
-    const categoryNames = categories.map(c => c.name);
+    const categories = await Category.find({
+      $or: [
+        { user_id: new mongoose.Types.ObjectId(userId) },
+        { is_default: true },
+      ],
+    });
+    const expenseCategories = categories
+      .filter((c) => c.type === "expense")
+      .map((c) => c.name);
+
+    const incomeCategories = categories
+      .filter((c) => c.type === "income")
+      .map((c) => c.name);
 
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     const prompt = `
@@ -162,7 +173,17 @@ router.post("/message", async (req, res) => {
         "action": "chat"
       }
       
-      The available categories are: ${categoryNames.join(", ")}.
+      The available categories are:
+        - Expense categories: ${expenseCategories.join(", ")}
+        - Income categories: ${incomeCategories.join(", ")}
+
+      IMPORTANT:
+        - If the transaction type is "expense", you must pick a category only from expense categories.
+        - If the transaction type is "income", you must pick a category only from income categories.
+        - If category is missing or cannot be determined, ALWAYS choose the closest matching one from the correct category list.
+        - NEVER leave category empty.
+        - If cannot determine anything, default to "Undefined".
+
       The user's message is: "${message}"
     `;
 
@@ -176,6 +197,7 @@ router.post("/message", async (req, res) => {
 
     if (responseObject.action === "create_transaction") {
       const { type, amount, category, description, date } = responseObject.data;
+
       const newTransaction = await financialService.createTransaction(
         userId,
         type,
@@ -202,7 +224,10 @@ router.post("/message", async (req, res) => {
         responseText = `Đã tạo báo cáo ${reportType} gửi đến ${email} với chế độ ${sendMode}.`;
       }
     } else if (responseObject.action === "query") {
-      const data = await financialService.executeQuery(userId, responseObject.query);
+      const data = await financialService.executeQuery(
+        userId,
+        responseObject.query
+      );
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
       const prompt = `
         You are a helpful assistant that generates a summary of the user's financial data.
@@ -265,33 +290,48 @@ router.get("/conversation/:conversationId", async (req, res) => {
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post('/upload', upload.single('image'), async (req, res) => {
-    try {
-        const { userId, conversationId } = req.body;
-        const imageFile = req.file;
+router.post("/upload", upload.single("image"), async (req, res) => {
+  try {
+    const { userId, conversationId } = req.body;
+    const imageFile = req.file;
 
-        if (!imageFile) {
-            return res.status(400).json({ success: false, error: 'No image file uploaded.' });
-        }
+    if (!imageFile) {
+      return res
+        .status(400)
+        .json({ success: false, error: "No image file uploaded." });
+    }
 
-        let conversation = await Conversation.findOne({ conversationId });
-        if (!conversation) {
-            conversation = new Conversation({ conversationId, messages: [], userId });
-        }
+    let conversation = await Conversation.findOne({ conversationId });
+    if (!conversation) {
+      conversation = new Conversation({ conversationId, messages: [], userId });
+    }
 
-        const categories = await Category.find({ $or: [{ user_id: new mongoose.Types.ObjectId(userId) }, { is_default: true }] });
-        const categoryNames = categories.map(c => c.name);
+    const categories = await Category.find({
+      $or: [
+        { user_id: new mongoose.Types.ObjectId(userId) },
+        { is_default: true },
+      ],
+    });
+    const expenseCategories = categories
+      .filter((c) => c.type === "expense")
+      .map((c) => c.name);
 
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const incomeCategories = categories
+      .filter((c) => c.type === "income")
+      .map((c) => c.name);
 
-        const prompt = `
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+    const prompt = `
             You are an expert financial assistant specializing in analyzing receipts and invoices.
             Analyze the attached image. Determine if it is a receipt, invoice, or any other proof of a financial transaction.
 
             If it is a financial document, extract the following information:
             - type: "expense" or "income". IMPORTANT: If the image is a bank transfer slip, a bill payment receipt, or a screenshot of a successful transfer confirmation from a mobile banking app, the type should always be "expense".
             - amount: The total amount of the transaction as a number.
-            - category: The most appropriate category from the following list: ${categoryNames.join(", ")}.
+            - category: The most appropriate category from the following list: Expense categories: ${expenseCategories.join(
+              ", "
+            )} and Income categories: ${incomeCategories.join(", ")}.
             - description: A brief description of the transaction.
             - date: The date and time of the transaction, if visible on the document. Return it in ISO 8601 format.
 
@@ -314,62 +354,61 @@ router.post('/upload', upload.single('image'), async (req, res) => {
             }
         `;
 
-        const imagePart = {
-            inlineData: {
-                data: imageFile.buffer.toString("base64"),
-                mimeType: imageFile.mimetype,
-            },
-        };
+    const imagePart = {
+      inlineData: {
+        data: imageFile.buffer.toString("base64"),
+        mimeType: imageFile.mimetype,
+      },
+    };
 
-        const result = await model.generateContent([prompt, imagePart]);
-        const response = await result.response;
-        const text = response.text();
-        const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
-        const responseObject = JSON.parse(jsonMatch ? jsonMatch[1] : text);
+    const result = await model.generateContent([prompt, imagePart]);
+    const response = await result.response;
+    const text = response.text();
+    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
+    const responseObject = JSON.parse(jsonMatch ? jsonMatch[1] : text);
 
-        let responseText;
+    let responseText;
 
-        if (responseObject.action === "create_transaction") {
-            const { type, amount, category, description, date } = responseObject.data;
-            const newTransaction = await financialService.createTransaction(
-                userId,
-                type,
-                amount,
-                category,
-                description || "",
-                date
-            );
-            responseText = `I have created the ${type} for you from the image: ${newTransaction.amount} for ${newTransaction.category_id.name}.`;
-        } else {
-            responseText = responseObject.message || "I could not process the image.";
-        }
-
-        conversation.messages.push({
-            role: "user",
-            content: `[Image uploaded: ${imageFile.originalname}]`,
-            timestamp: new Date(),
-        });
-        conversation.messages.push({
-            role: "model",
-            content: responseText,
-            timestamp: new Date(),
-        });
-
-        await conversation.save();
-
-        res.json({
-            success: true,
-            message: responseText,
-            conversationId,
-        });
-
-    } catch (error) {
-        console.error("Image upload error:", error);
-        res.status(500).json({
-            success: false,
-            error: error.message,
-        });
+    if (responseObject.action === "create_transaction") {
+      const { type, amount, category, description, date } = responseObject.data;
+      const newTransaction = await financialService.createTransaction(
+        userId,
+        type,
+        amount,
+        category,
+        description || "",
+        date
+      );
+      responseText = `I have created the ${type} for you from the image: ${newTransaction.amount} for ${newTransaction.category_id.name}.`;
+    } else {
+      responseText = responseObject.message || "I could not process the image.";
     }
+
+    conversation.messages.push({
+      role: "user",
+      content: `[Image uploaded: ${imageFile.originalname}]`,
+      timestamp: new Date(),
+    });
+    conversation.messages.push({
+      role: "model",
+      content: responseText,
+      timestamp: new Date(),
+    });
+
+    await conversation.save();
+
+    res.json({
+      success: true,
+      message: responseText,
+      conversationId,
+    });
+  } catch (error) {
+    console.error("Image upload error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
 });
 
 module.exports = router;
